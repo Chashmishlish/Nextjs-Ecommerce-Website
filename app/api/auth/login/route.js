@@ -57,7 +57,14 @@ export async function POST(request){
         // OTP generation
         await OTPModel.deleteMany ({ email }) //deleting old ogtp
 
-        
+        const otp = generateOTP()
+
+        // storing otp into database
+        const newOtpData = new OTPModel({
+            email, otp
+        })
+
+        await newOtpData.save()
 
     } catch (error) {
         return catchError(error)
