@@ -1,7 +1,12 @@
+import { emailVerificationLink } from "@/email/emailVerificationLink";
+import { otpEmail } from "@/email/otpVerificationLink";
 import { connectDB } from "@/lib/databaseConnection";
-import { catchError } from "@/lib/helperFunction";
+import { catchError, generateOTP } from "@/lib/helperFunction";
+import { sendMail } from "@/lib/sendMail";
 import { zSchema } from "@/lib/zodSchema";
 import OTPModel from "@/models/Otp.model";
+import UserModel from "@/models/user.model";
+import { SignJWT } from "jose";
 import { z } from "zod" ;
 
 export async function POST(request){
@@ -65,6 +70,16 @@ export async function POST(request){
         })
 
         await newOtpData.save()
+
+        //sending onto mail
+        const otpemailStatus = await sendMail('Your login verification code', 
+        email, otpEmail (otp))
+        if(!otpemailStatus.success){
+            return response (false, 400, 'Failed to send OTP.')
+        }
+        
+        return response (true, 400, 'Please verify your device.')
+    
 
     } catch (error) {
         return catchError(error)
