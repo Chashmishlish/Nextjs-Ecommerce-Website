@@ -5,6 +5,7 @@ import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { zSchema } from "@/lib/zodSchema";
 import react, { useState } from "react";
+import axios from "axios";
 
 
 import { Button } from "@/components/ui/button"
@@ -45,8 +46,24 @@ const LogInPage = () => {
   })
 
   const handleLoginSubmit = async (values) => {
-    console.log(values)
+    try {
+        setLoading(true)
+        const {data: registerResponse} = await axios.post('/api/auth/login', values)
+        if(!registerResponse.success){
+        throw new Error(registerResponse.message)
+        }
+    
+        form.reset()
+        alert(registerResponse.message)
+    
+        } catch (error) {
+            alert(error.message)
+        } finally {
+            setLoading(false)
+        }
+      }  
   }
+
 
   return (
     <Card className="w-[400px]">
@@ -126,7 +143,6 @@ const LogInPage = () => {
       </CardContent>
     </Card>
   );
-};
 
 export default LogInPage;
 
