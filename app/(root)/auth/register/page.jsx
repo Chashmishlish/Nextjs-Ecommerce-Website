@@ -6,8 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { zSchema } from "@/lib/zodSchema";
 import react, { useState } from "react";
 import axios from 'axios';
-
-
+import { ToastContainer, toast } from 'react-toastify';
 
 import { Button } from "@/components/ui/button"
 import {
@@ -60,10 +59,10 @@ const RegisterPage = () => {
         }
 
         form.reset()
-        alert(registerResponse.message)
+        showToast('success', registerResponse.message)
 
     } catch (error) {
-        alert(error.message)
+        showToast('error', registerResponse.message)
     } finally {
         setLoading(false)
     }
