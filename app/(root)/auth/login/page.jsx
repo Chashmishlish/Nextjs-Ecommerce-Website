@@ -23,10 +23,13 @@ import { FaRegEyeSlash } from "react-icons/fa";
 import { FaRegEye } from "react-icons/fa6";
 import Link from "next/link";
 import { WEBSITE_REGISTER } from "@/routes/WebsiteRoute";
+import OTPVerification from "@/components/Application/OTPVerification";
 
 const LogInPage = () => {
   const [loading, setLoading] = useState(false);
+  const [otpVerificationLoading, setOtpVerificationLoading] = useState(false);
   const [isTypePassword, setIsTypePassword] = useState(true);
+  const [otpEmail, setOtpEmail] = useState("");
 
   const formSchema = zSchema.pick({
     email: true,
@@ -54,6 +57,7 @@ const LogInPage = () => {
         throw new Error(registerResponse.message);
       }
 
+      setOtpEmail(values.email);
       form.reset();
       showToast('success', registerResponse.message);
     } catch (error) {
@@ -63,7 +67,12 @@ const LogInPage = () => {
     }
   };
 
-  
+  // otp verification 
+  const handleOtpVerification = async (values)=> {
+    // console.log(values)
+    // alert("hello moto")
+  }
+
   return (
     <Card className="w-[400px]">
       <CardContent>
@@ -76,7 +85,11 @@ const LogInPage = () => {
             className="max-w-[400px]"
           />
         </div>
-        <div className="text-center">
+          
+          {!otpEmail
+            ?
+            <>
+            <div className="text-center">
           <h1 className="text-3xl font-semibold">Login Into Account</h1>
           <p> Login into your account by filling out the form below. </p>
         </div>
@@ -155,6 +168,13 @@ const LogInPage = () => {
             </form>
           </Form>
         </div>
+            </>
+            :
+            <OTPVerification email={otpEmail} onSubmit={handleOtpVerification}
+            loading={otpVerificationLoading}/>
+          }
+
+        
       </CardContent>
     </Card>
   );
