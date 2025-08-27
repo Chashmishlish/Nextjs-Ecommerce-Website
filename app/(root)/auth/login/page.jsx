@@ -6,19 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { zSchema } from "@/lib/zodSchema";
 import { useState } from "react";
 import axios from "axios";
-// import { useForm } from "react-hook-form"; //chatgpt-form not define error
-
-
-
 import { Button } from "@/components/ui/button"
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { email } from "zod";
 import { useForm } from "react-hook-form";
@@ -29,14 +18,14 @@ import { FaRegEye } from "react-icons/fa6";
 import Link from "next/link";
 import { WEBSITE_REGISTER } from "@/routes/WebsiteRoute";
 
-const LogInPage = () => {
+  const LogInPage = () => {
   const [loading, setLoading] = useState(false)
   const [isTypePassword, setIsTypePassword] = useState(true)
   
-  const formSchema =zSchema.pick({
+   const formSchema =zSchema.pick({
     email : true
   }).extend({
-    password: z.string().min('4', 'Password field is required.')
+    password: z.string().min(4, 'Password field is required.')
   })
 
   const form = useForm({
@@ -84,7 +73,7 @@ const LogInPage = () => {
         </div>
         <div className="mt-5">
           <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleLoginSubmit)}>
+          <form onSubmit={form.handleSubmit(handleLoginSubmit)}>
         <div className='mb-3'>
           <FormField
           control={form.control}
