@@ -1,12 +1,12 @@
 'use client'
 import { Card, CardContent } from "@/components/ui/card";
-import React from "react";
+// import React from "react";
 import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { zSchema } from "@/lib/zodSchema";
-import react, { useState } from "react";
+// import { useState } from "react";
+import React, { useState } from "react";
 import axios from 'axios';
-import { ToastContainer, toast } from 'react-toastify';
 
 import { Button } from "@/components/ui/button"
 import {
@@ -26,6 +26,7 @@ import { FaRegEyeSlash } from "react-icons/fa";
 import { FaRegEye } from "react-icons/fa6";
 import Link from "next/link";
 import { WEBSITE_LOGIN } from "@/routes/WebsiteRoute";
+import { showToast } from "@/lib/showToast";
 
 const RegisterPage = () => {
   const [loading, setLoading] = useState(false)
@@ -39,7 +40,6 @@ const RegisterPage = () => {
     path: ['confirmPassword']
   } )
 
-
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -48,25 +48,27 @@ const RegisterPage = () => {
       password: "", 
       confirmPassword: "",
     },
-  })
+  });
 
   const handleRegisterSubmit = async (values) => {
-    try {
-        setLoading(true)
-        const {data: registerResponse} = await axios.post('/api/auth/register', values)
-        if(!registerResponse.success){
-            throw new Error(registerResponse.message)
-        }
+    showToast('success' , 'Toast success')
+  
+  //   try {
+  //       setLoading(true)
+  //       const {data: registerResponse} = await axios.post('/api/auth/register', values)
+  //       if(!registerResponse.success){
+  //           throw new Error(registerResponse.message)
+  //       }
 
-        form.reset()
-        showToast('success', registerResponse.message)
+  //       form.reset()
+  //       showToast('success', registerResponse.message)
 
-    } catch (error) {
-        showToast('error', registerResponse.message)
-    } finally {
-        setLoading(false)
-    }
-  }  
+  //   } catch (error) {
+  //       showToast('error', registerResponse.message)
+  //   } finally {
+  //       setLoading(false)
+  //   }
+   }  
 
   return (
     <Card className="w-[400px]">
@@ -85,6 +87,7 @@ const RegisterPage = () => {
           <p> Create new account by filling out the form below. </p>
         </div>
         <div className="mt-5">
+
           <Form {...form}>
       <form onSubmit={form.handleSubmit(handleRegisterSubmit)}>
         <div className='mb-3'>
@@ -181,4 +184,5 @@ const RegisterPage = () => {
 };
 
 
-export default RegisterPage
+export default RegisterPage;
+// export default ComponentName;

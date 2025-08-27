@@ -4,8 +4,10 @@ import React from "react";
 import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { zSchema } from "@/lib/zodSchema";
-import react, { useState } from "react";
+import { useState } from "react";
 import axios from "axios";
+// import { useForm } from "react-hook-form"; //chatgpt-form not define error
+
 
 
 import { Button } from "@/components/ui/button"
@@ -18,7 +20,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-// import { email } from "zod";
+import { email } from "zod";
 import { useForm } from "react-hook-form";
 import ButtonLoading from "@/components/Application/ButtonLoading";
 import z from "zod";
@@ -30,12 +32,12 @@ import { WEBSITE_REGISTER } from "@/routes/WebsiteRoute";
 const LogInPage = () => {
   const [loading, setLoading] = useState(false)
   const [isTypePassword, setIsTypePassword] = useState(true)
+  
   const formSchema =zSchema.pick({
     email : true
   }).extend({
     password: z.string().min('4', 'Password field is required.')
   })
-
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -50,19 +52,18 @@ const LogInPage = () => {
         setLoading(true)
         const {data: registerResponse} = await axios.post('/api/auth/login', values)
         if(!registerResponse.success){
-        throw new Error(registerResponse.message)
+        throw new Error(registerResponse.message);
         }
     
         form.reset()
-        alert(registerResponse.message)
-    
+        alert(registerResponse.message);
         } catch (error) {
-            alert(error.message)
+            alert(error.message);
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
       }  
-  }
+  };
 
 
   return (
@@ -143,7 +144,9 @@ const LogInPage = () => {
       </CardContent>
     </Card>
   );
+// };
 
 export default LogInPage;
+// export default ComponentName;
 
 
