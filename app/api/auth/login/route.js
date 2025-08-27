@@ -1,7 +1,7 @@
 import { emailVerificationLink } from "@/email/emailVerificationLink";
 import { otpEmail } from "@/email/otpVerificationLink";
 import { connectDB } from "@/lib/databaseConnection";
-import { catchError, generateOTP } from "@/lib/helperFunction";
+import { response, catchError, generateOTP } from "@/lib/helperFunction";
 import { sendMail } from "@/lib/sendMail";
 import { zSchema } from "@/lib/zodSchema";
 import OTPModel from "@/models/Otp.model";
@@ -29,27 +29,30 @@ export async function POST(request){
         const {email, password}  = validatedData.data
 
         //get user data
-        const getUser = await UserModel.findOne({ email })
+        const getUser = await UserModel.findOne({ deletedAt: null, email }).select("+password")
         if(!getUser){
             return response (false, 400, 'Invalid login credentials.',
                 validationSchema.error)
         }
 
-        // resend email verification link
-        if(getUser.isEmailVerified) {
-            
-                    const secret = new TextEncoder().encode(process.env.SECRET_KEY)
-                    const token = await new SignJWT({userID: getUser._id.toString()})
-                    .setIssuedAt()
-                    .setExpirationTime('1h')
-                    .setProtectedHeader({ alg: 'HS256' })
-                    .sign(secret)
+        // resend email verification link only if email is NOT verified
+if(!getUser.isEmailVerified) {
+    const secret = new TextEncoder().encode(process.env.SECRET_KEY)
+    const token = await new SignJWT({userID: getUser._id.toString()})
+        .setIssuedAt()
+        .setExpirationTime('1h')
+        .setProtectedHeader({ alg: 'HS256' })
+        .sign(secret)
 
-                    await sendMail('Email Verification request from Smilish Store',email,
-                    emailVerificationLink(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify-email/${token}`));
-                        return response (false, 401, 'Your email is not verified. We have sent a verification link to your registered email address')
+    await sendMail(
+        'Email Verification request from Smilish Store',
+        email,
+        emailVerificationLink(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify-email/${token}`)
+    )
 
-        }
+    return response(false, 401, 'Your email is not verified. We have sent a verification link to your registered email address')
+}
+
 
         // password verification
         const isPasswordVerified = await getUser.comparePassword(password)
@@ -58,6 +61,8 @@ export async function POST(request){
             return response (false, 400, 'Invalid login credentials.',
                 validationSchema.error)
         }
+
+
 
         // OTP generation
         await OTPModel.deleteMany ({ email }) //deleting old ogtp
@@ -72,14 +77,17 @@ export async function POST(request){
         await newOtpData.save()
 
         //sending onto mail
-        const otpemailStatus = await sendMail('Your login verification code', 
-        email, otpEmail (otp))
-        if(!otpemailStatus.success){
-            return response (false, 400, 'Failed to send OTP.')
-        }
-        
-        return response (true, 400, 'Please verify your device.')
-    
+     const otpemailStatus = await sendMail(
+        'Your login verification code', 
+        email, 
+        otpEmail(otp)
+        );
+
+    if(!otpemailStatus.success){
+        return response(false, 400, 'Failed to send OTP.')
+    }
+
+    return response(true, 200, 'Please verify your device.')
 
     } catch (error) {
         return catchError(error)

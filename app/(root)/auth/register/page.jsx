@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { zSchema } from "@/lib/zodSchema";
 // import { useState } from "react";
 import React, { useState } from "react";
+import { response, catchError, generateOTP } from "@/lib/helperFunction";
 import axios from 'axios';
 
 import { Button } from "@/components/ui/button"
@@ -51,23 +52,23 @@ const RegisterPage = () => {
   });
 
   const handleRegisterSubmit = async (values) => {
-    showToast('success' , 'Toast success')
+    // showToast('success' , 'Toast success')
   
-  //   try {
-  //       setLoading(true)
-  //       const {data: registerResponse} = await axios.post('/api/auth/register', values)
-  //       if(!registerResponse.success){
-  //           throw new Error(registerResponse.message)
-  //       }
+    try {
+        setLoading(true)
+        const {data: registerResponse} = await axios.post('/api/auth/register', values)
+        if(!registerResponse.success){
+            throw new Error(registerResponse.message)
+        }
 
-  //       form.reset()
-  //       showToast('success', registerResponse.message)
+        form.reset()
+        showToast('success', registerResponse.message)
 
-  //   } catch (error) {
-  //       showToast('error', registerResponse.message)
-  //   } finally {
-  //       setLoading(false)
-  //   }
+    } catch (error) {
+        showToast('error', error.message)
+    } finally {
+        setLoading(false)
+    }
    }  
 
   return (
@@ -185,4 +186,3 @@ const RegisterPage = () => {
 
 
 export default RegisterPage;
-// export default ComponentName;
