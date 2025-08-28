@@ -52,7 +52,7 @@ const RegisterPage = () => {
   });
 
   const handleRegisterSubmit = async (values) => {
-    // showToast('success' , 'Toast success')
+    
   
     try {
         setLoading(true)

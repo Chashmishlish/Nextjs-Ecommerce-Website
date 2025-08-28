@@ -1,54 +1,54 @@
 import { connectDB } from "@/lib/databaseConnection"
-import { catchError } from "@/lib/helperFunction"
+import { catchError, response, generateOTP } from "@/lib/helperFunction"
 import { zSchema } from "@/lib/zodSchema"
 import UserModel from "@/models/user.model"
 import OTPModel from "@/models/Otp.model"
-import { response, generateOTP } from "@/lib/helperFunction"  // if generateOTP is there
-import sendMail from "@/lib/sendMail"
-import { SignJWT, jwtVerify } from "jose";
+import { otpEmail } from "@/email/otpVerificationLink"   // yeh zaroor import karo
+import { sendMail } from "@/lib/sendMail"               // sendMail bhi properly import
 
-
-export async function POST(request){
+export async function POST(request) {
     try {
-        await connectDB()
+        await connectDB();
 
-        const payload = await request.json()
-        const validationSchema = zSchema.pick({ email: true })
-        const validatedData = validationSchema.safeParse(payload)
-        if(!validatedDate.success){
-            return response(false, 401, 'Invalid or missing input field', validatedData.error )
+        const payload = await request.json();
+        const validationSchema = zSchema.pick({ email: true });
+        const validatedData = validationSchema.safeParse(payload);
+
+        if (!validatedData.success) {
+            return response(false, 401, "Invalid or missing input field", validatedData.error);
         }
 
-        const {email} = validatedData.data
+        const { email } = validatedData.data;
 
-        const getUser = await UserModel.findOne({ email })
-        // const getUser = await UserModel.findOne({ email, deletedAt: null })
-        if(!getUser){
-            return response(false, 404, 'User not found.')
+        const getUser = await UserModel.findOne({ email });
+        if (!getUser) {
+            return response(false, 404, "User not found.");
         }
 
+        // Purane OTP delete 
+        await OTPModel.deleteMany({ email });
 
-        //remove old otps
-        await OTPModel.deleteMany({ email })
-        const otp = generateOTP()
-        const newOtpData = OTPModel({
+        // New OTP generate
+        const otp = generateOTP();
+        const newOtpData = new OTPModel({
             email,
             otp
         });
+        await newOtpData.save();
 
-        await newOtpData.save()
-        // return response(true, 200, 'OTP generated and sent successfully.')
-        const otpSendStatus = await sendMail('Your login verification code.', email,
-            otpEmail(otp))
+        //  OTP send via email
+        const otpSendStatus = await sendMail(
+            "Your login verification code",
+            email,
+            otpEmail(otp)
+        );
 
-            if(!otpSendStatus.success){
-                return response(false, 400, 'Failed to resend otp.')
-            }
-            return response(true, 200, 'OTP generated and sent successfully.')
-            
+        if (!otpSendStatus.success) {
+            return response(false, 400, "Failed to resend OTP.");
+        }
 
-
+        return response(true, 200, "OTP generated and sent successfully.");
     } catch (error) {
-        return catchError(error)
+        return catchError(error);
     }
 }

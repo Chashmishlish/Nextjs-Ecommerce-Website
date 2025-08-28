@@ -1,65 +1,65 @@
-import { emailVerificationLink } from "@/email/emailVerificationLink";
-import { connectDB } from "@/lib/databaseConnection";
-import { catchError, response } from "@/lib/helperFunction";
-import { sendMail } from "@/lib/sendMail"
-import { zSchema } from "@/lib/zodSchema"
-import UserModel from "@/models/user.model";
-import { SignJWT } from "jose";
+// import { emailVerificationLink } from "@/email/emailVerificationLink";
+// import { connectDB } from "@/lib/databaseConnection";
+// import { catchError, response } from "@/lib/helperFunction";
+// import { sendMail } from "@/lib/sendMail"
+// import { zSchema } from "@/lib/zodSchema"
+// import UserModel from "@/models/user.model";
+// import { SignJWT } from "jose";
 
-export async function POST(request){
-    try{
-        await connectDB();
-        // schema for validation
-        const validationSchema = zSchema.pick({
-            name: true, email: true, password: true });
+// export async function POST(request){
+//     try{
+//         await connectDB();
+//         // schema for validation
+//         const validationSchema = zSchema.pick({
+//             name: true, email: true, password: true });
 
-        const payload = await request.json();
+//         const payload = await request.json();
 
-        const validatedData = validationSchema.safeParse(payload);
+//         const validatedData = validationSchema.safeParse(payload);
 
-        if (!validatedData.success){
-            return response(false, 401, 'Invalid or Missing Input field',
-            validatedData.error)
-        }
+//         if (!validatedData.success){
+//             return response(false, 401, 'Invalid or Missing Input field',
+//             validatedData.error)
+//         }
 
-        const {name , email, password} = validatedData.data
-//check for already registered users'
-        const checkUser = await UserModel.exists({ email })
-        if(checkUser){
-            return response(false, 409, 'User already registered.')
-        }
+//         const {name , email, password} = validatedData.data
+// //check for already registered users'
+//         const checkUser = await UserModel.exists({ email })
+//         if(checkUser){
+//             return response(false, 409, 'User already registered.')
+//         }
         
-//new registration members
-        const NewRegistration = new UserModel({
-            name, email, password
-        })
+// //new registration members
+//         const NewRegistration = new UserModel({
+//             name, email, password
+//         })
 
-        await NewRegistration.save()
+//         await NewRegistration.save()
 
-// email verification // to create token we ave jose library
+// // email verification // to create token we ave jose library
 
-        const secret = new TextEncoder().encode(process.env.SECRET_KEY)
-        const token = await new SignJWT({userID: NewRegistration._id.toString()})
-        .setIssuedAt()
-        .setExpirationTime('1h')
-        .setProtectedHeader({ alg: 'HS256' })
-        .sign(secret)
+//         const secret = new TextEncoder().encode(process.env.SECRET_KEY)
+//         const token = await new SignJWT({userID: NewRegistration._id.toString()})
+//         .setIssuedAt()
+//         .setExpirationTime('1h')
+//         .setProtectedHeader({ alg: 'HS256' })
+//         .sign(secret)
 
-        // console.log("TOKEN:", token);
+//         // console.log("TOKEN:", token);
 
-// mail setup for token
+// // mail setup for token
 
-        await sendMail('Email Verification request from Smilish Store',email,
-        emailVerificationLink(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify-email/${token}`)
-        );
-    return response(true, 200, 'Registration successful, Please verify your email address.')
+//         await sendMail('Email Verification request from Smilish Store',email,
+//         emailVerificationLink(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify-email/${token}`)
+//         );
+//     return response(true, 200, 'Registration successful, Please verify your email address.')
     
-    } catch(error){
-        return catchError(error)
+//     } catch(error){
+//         return catchError(error)
 
-        // helpFunction me hai iska baki code
-    }
-}
+//         // helpFunction me hai iska baki code
+//     }
+// }
 
 // // app/api/auth/register/route.js (Next.js 13+ API Route)
 
@@ -150,3 +150,53 @@ export async function POST(request){
 // //     return catchError(err, "Registration failed. Please try again.");
 // //   }
 // // };
+import { emailVerificationLink } from "@/email/emailVerificationLink";
+import { connectDB } from "@/lib/databaseConnection";
+import { catchError, response } from "@/lib/helperFunction";
+import { sendMail } from "@/lib/sendMail";
+import { zSchema } from "@/lib/zodSchema";
+import UserModel from "@/models/user.model";
+import { SignJWT } from "jose";
+import bcrypt from "bcryptjs";
+
+export async function POST(request) {
+  try {
+    await connectDB();
+
+    const validationSchema = zSchema.pick({
+      name: true, email: true, password: true
+    });
+    const payload = await request.json();
+    const validatedData = validationSchema.safeParse(payload);
+
+    if (!validatedData.success) {
+      return response(false, 401, "Invalid or Missing Input field", validatedData.error);
+    }
+
+    const { name, email, password } = validatedData.data;
+
+    const checkUser = await UserModel.exists({ email });
+    if (checkUser) return response(false, 409, "User already registered.");
+
+    const newUser = new UserModel({ name, email, password });
+     await newUser.save();
+
+
+    const secret = new TextEncoder().encode(process.env.SECRET_KEY);
+    const token = await new SignJWT({ userID: newUser._id.toString() })
+      .setIssuedAt()
+      .setExpirationTime("1h")
+      .setProtectedHeader({ alg: "HS256" })
+      .sign(secret);
+
+    await sendMail(
+      "Email Verification",
+      email,
+      emailVerificationLink(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify-email/${token}`)
+    );
+
+    return response(true, 200, "Registration successful, Please verify your email address.");
+  } catch (error) {
+    return catchError(error);
+  }
+}
