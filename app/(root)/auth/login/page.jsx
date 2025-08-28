@@ -48,9 +48,9 @@ const LogInPage = () => {
   const handleLoginSubmit = async (values) => {
     // showToast('success', 'Toost success')
     try {
-      setLoading(true);
+      setOtpVerificationLoading(true);
       const { data: registerResponse } = await axios.post(
-        "/api/auth/login",
+        "/api/auth/verify-otp",
         values
       );
       if (!registerResponse.success) {
@@ -58,7 +58,27 @@ const LogInPage = () => {
       }
 
       setOtpEmail(values.email);
-      form.reset();
+      // setOtpEmail('');
+      // form.reset();
+      showToast('success', registerResponse.message);
+    } catch (error) {
+      showToast('success', error.message);
+    } finally {
+      setOtpVerificationLoading(false);
+    }
+  };
+
+  // otp verification 
+  const handleOtpVerification = async (values)=> {
+    try {
+      setLoading(true);
+      const { data: registerResponse } = await axios.post("/api/auth/login", values);
+      if (!registerResponse.success) {
+        throw new Error(registerResponse.message);
+      }
+
+      setOtpEmail(values.email);
+      // form.reset();
       showToast('success', registerResponse.message);
     } catch (error) {
       showToast('success', error.message);
@@ -66,12 +86,6 @@ const LogInPage = () => {
       setLoading(false);
     }
   };
-
-  // otp verification 
-  const handleOtpVerification = async (values)=> {
-    // console.log(values)
-    // alert("hello moto")
-  }
 
   return (
     <Card className="w-[400px]">

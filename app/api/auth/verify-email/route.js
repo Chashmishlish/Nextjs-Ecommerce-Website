@@ -4,6 +4,7 @@ import { catchError, response } from "@/lib/helperFunction";
 import { jwtVerify } from "jose";
 import { isValidObjectId } from "mongoose";
 import UserModel from "@/models/user.model";
+// import { zSchema } from "@/lib/zodSchema";
 
 export async function POST(request){
     try {
@@ -18,7 +19,7 @@ export async function POST(request){
 
         const decoded = await jwtVerify(token, secret)
         // const userId = decoded.payload.userId
-        const userId = decoded.payload.userID  
+        const userID = decoded.payload.userID  
         // console.log({
         // payload: decoded.payload,
         // protectedHeader: decoded.protectedHeader
