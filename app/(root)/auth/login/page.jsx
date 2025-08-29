@@ -102,7 +102,7 @@ const LogInPage = () => {
 
 
       // Redirect to dashboard or home page after successful login
-      // router.push("/dashboard"); // Change this to your desired route
+      router.push("/dashboard"); // Change this to your desired route
     } catch (error) {
       showToast("error", getErrorMessage(error));
       throw error; // Re-throw to let OTP component handle reset

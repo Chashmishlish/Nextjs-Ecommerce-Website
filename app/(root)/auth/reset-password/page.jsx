@@ -20,13 +20,19 @@ import ButtonLoading from "@/components/Application/ButtonLoading";
 import Link from "next/link";
 import { WEBSITE_LOGIN } from "@/routes/WebsiteRoute";
 import OTPVerification from "@/components/Application/OTPVerification";
+import UpdatePassword from "@/components/Application/updatePassword";
 
+const getErrorMessage = (error) => {
+  if (error?.response?.data?.message) return error.response.data.message;
+  if (error?.message) return error.message;
+  return "Something went wrong.";
+};
 
-const resetPassword = () => {
+const ResetPassword = () => {
     const [emailVerificationLoading, setEmailVerificationLoading] = useState(false)
     const [otpVerificationLoading, setOtpVerificationLoading] = useState(false)
     const [otpEmail, setOtpEmail] = useState("");
-    
+    const [isOtpVerified, setIsOtpVerified] = useState(false);
     const formSchema = zSchema.pick({
         email: true
     })
@@ -40,29 +46,40 @@ const resetPassword = () => {
     })
 
     const handleEmailVerification = async (values) => {
-
-    }
+      try {
+          setEmailVerificationLoading(true);
+          const { data: sendOtpResponse } = await axios.post("/api/auth/reset-password/send-otp", values);
+    
+          if (!sendOtpResponse.success) {
+            throw new Error(sendOtpResponse.message);
+          }
+          setOtpEmail(values.email)
+          showToast("success", sendOtpResponse.message || "OTP sent successfully!");
+          // setIsOtpVerified(true)
+          // Redirect to dashboard or home page after successful login
+          // router.push("/dashboard"); // Change this to your desired route
+        } catch (error) {
+          showToast("error", getErrorMessage(error));
+          throw error; // Re-throw to let OTP component handle reset
+        } finally {
+          setEmailVerificationLoading(false);
+        }
+    };
 
     // 🔹 OTP verification
       const handleOtpVerification = async (otpValue) => {
         try {
           setOtpVerificationLoading(true);
-          const { data: otpResponse } = await axios.post("/api/auth/", {
+          const { data: sendOtpResponse } = await axios.post("/api/auth/reset-password/verify-otp", {
             email: otpEmail,
             otp: otpValue
           });
     
-          if (!otpResponse.success) {
-            throw new Error(otpResponse.message);
+          if (!sendOtpResponse.success) {
+            throw new Error(sendOtpResponse.message);
           }
-    
-          showToast("success", otpResponse.message || "Login successful!");
-          
-          dispatch(login(otpResponse.data))
-    
-    
-          // Redirect to dashboard or home page after successful login
-          // router.push("/dashboard"); // Change this to your desired route
+          showToast("success", sendOtpResponse.message ||  "OTP verified!" );
+          setIsOtpVerified(true); //Move here
         } catch (error) {
           showToast("error", getErrorMessage(error));
           throw error; // Re-throw to let OTP component handle reset
@@ -139,17 +156,24 @@ const resetPassword = () => {
             </div>
           </>
         ) : 
-          <OTPVerification
+        <>
+        {!isOtpVerified
+        ?
+        <OTPVerification
             email={otpEmail}
             onSubmit={handleOtpVerification}
             loading={otpVerificationLoading}
-            onBack={() => setOtpEmail("")} // Add back button functionality
-          />
+            onBack={() => setOtpEmail("")} />
+          :
+        <UpdatePassword email={otpEmail}/>
         }
+        </>
+          
+      }
       </CardContent>
     </Card>
     </div>
   )
 }
 
-export default resetPassword
+export default ResetPassword
