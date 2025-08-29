@@ -21,11 +21,12 @@ import z from "zod";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { FaRegEye } from "react-icons/fa6";
 import Link from "next/link";
-import { WEBSITE_REGISTER, WEBSITE_RESETPASSWORD } from "@/routes/WebsiteRoute";
+import { USER_DASHBOARD, WEBSITE_REGISTER, WEBSITE_RESETPASSWORD } from "@/routes/WebsiteRoute";
 import OTPVerification from "@/components/Application/OTPVerification";
-import { useRouter } from "next/navigation"; // Add this import
+import { useRouter } from "next/navigation"; 
 import { useDispatch } from "react-redux";
 import { login } from "@/store/reducer/authReducer";
+import { ADMIN_DASHBOARD } from "@/routes/AdminPanelRoutes";
 
 // 🔹 Helper to extract error message safely
 const getErrorMessage = (error) => {
@@ -37,7 +38,8 @@ const getErrorMessage = (error) => {
 };
 
 const LogInPage = () => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [otpVerificationLoading, setOtpVerificationLoading] = useState(false);
   const [isTypePassword, setIsTypePassword] = useState(true);
@@ -100,9 +102,17 @@ const LogInPage = () => {
       
       dispatch(login(otpResponse.data))
 
+      // Redirect to callback if present, else go to dashboard based on role
+      if(searchParams.has('callback')) {
+        router.push(searchParams.get('callback'))
+      } else {
+        otpResponse.data.role === 'admin' 
+        ? router.push(ADMIN_DASHBOARD)
+        : router.push(USER_DASHBOARD)
+      }
 
       // Redirect to dashboard or home page after successful login
-      router.push("/dashboard"); // Change this to your desired route
+      // router.push("/dashboard"); // Change this to your desired route
     } catch (error) {
       showToast("error", getErrorMessage(error));
       throw error; // Re-throw to let OTP component handle reset
