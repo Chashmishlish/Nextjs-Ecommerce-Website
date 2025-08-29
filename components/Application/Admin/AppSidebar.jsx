@@ -1,18 +1,16 @@
-
+'use client'
 import React from 'react'
 import {
   Sidebar,
   SidebarHeader,
   SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
   SidebarMenuSubItem,
   SidebarMenuSubButton,
+  useSidebar,
 } from "@/components/ui/sidebar"
 import Image from 'next/image'
 import logoBlack from '@/public/assests/images/logo-black.png'
@@ -23,24 +21,42 @@ import { IoMdClose } from "react-icons/io";
 import { adminAppSidebarMenu } from '@/lib/adminSidebarMenu'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import Link from 'next/link'
-const AppSidebar = () => {
-  return (
-    <Sidebar>
-      <SidebarHeader className="border-b h-18 p-0 ">
-        <div className='flex justify-between item-center px-2'>
 
-          <div className="relative h-12 w-auto block dark:hidden">
-          <Image src={logoBlack} alt="logo dark" className="object-contain" />
-          </div>
-          <div className="relative h-12 w-auto hidden dark:block">
-          <Image src={logoWhite} alt="logo white" className="object-contain" />
-          </div>
-            
-            <Button type="button" size="icon" className="md-hidden flex items-center justify-center mt-4">
-            <IoMdClose />
-            </Button>
-        </div>
-      </SidebarHeader> 
+
+const AppSidebar = () => {
+      const {toggleSidebar} = useSidebar()
+  
+  return (
+        <Sidebar className="z-50">
+          <SidebarHeader className="border-b h-14 p-0">
+            <div className="flex justify-between items-center px-3 h-14">
+
+              {/* Logo Area - Left Cornered */}
+              <div className="flex items-center h-full">
+                <Image
+                  src={logoBlack}
+                  alt="logo dark"
+                  className="object-contain block dark:hidden h-12 w-auto"
+                />
+                <Image
+                  src={logoWhite}
+                  alt="logo white"
+                  className="object-contain hidden dark:block h-12 w-auto"
+                />
+              </div>
+
+              {/* Close Button */}
+              <Button
+                onClick={toggleSidebar}
+                type="button"
+                size="icon"
+                className="md:hidden flex items-center justify-center"
+              >
+                <IoMdClose />
+              </Button>
+            </div>
+          </SidebarHeader>
+
 
     <SidebarContent className='p-3'>
       <SidebarMenu>
@@ -89,8 +105,3 @@ const AppSidebar = () => {
 
 export default AppSidebar
 
-{/* <SidebarContent>
-        <SidebarGroup />
-        <SidebarGroup />
-      </SidebarContent>
-      <SidebarFooter /> */}
