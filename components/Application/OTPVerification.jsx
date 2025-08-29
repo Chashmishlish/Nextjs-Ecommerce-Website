@@ -34,11 +34,13 @@ const OTPVerification = ({ email, onSubmit, loading }) => {
   const resendOTP = async () => {
     try {
       setIsResendingOtp(true);
-      const { data: registerResponse } = await axios.post('/api/auth/resend-otp', { email });
-      if (!registerResponse.success) {
-        throw new Error(registerResponse.message);
+      const { data: resendOtpResponse } = await axios.post('/api/auth/resend-otp', 
+         { email }
+      );
+      if (!resendOtpResponse.success) {
+        throw new Error(resendOtpResponse.message);
       }
-      showToast('success', registerResponse.message);
+      showToast('success', resendOtpResponse.message);
     } catch (error) {
       showToast('error', error.message || 'Failed to resend OTP');
     } finally {
