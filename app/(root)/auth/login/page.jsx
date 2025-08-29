@@ -21,7 +21,7 @@ import z from "zod";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { FaRegEye } from "react-icons/fa6";
 import Link from "next/link";
-import { WEBSITE_REGISTER } from "@/routes/WebsiteRoute";
+import { WEBSITE_REGISTER, WEBSITE_RESETPASSWORD } from "@/routes/WebsiteRoute";
 import OTPVerification from "@/components/Application/OTPVerification";
 import { useRouter } from "next/navigation"; // Add this import
 import { useDispatch } from "react-redux";
@@ -197,7 +197,7 @@ const LogInPage = () => {
                       </Link>
                     </div>
                     <div>
-                      <Link href="/forgot-password" className="text-primary underline">
+                      <Link href={WEBSITE_RESETPASSWORD} className="text-primary underline">
                         Forget Password?
                       </Link>
                     </div>
