@@ -23,7 +23,7 @@ import { FaRegEye } from "react-icons/fa6";
 import Link from "next/link";
 import { USER_DASHBOARD, WEBSITE_REGISTER, WEBSITE_RESETPASSWORD } from "@/routes/WebsiteRoute";
 import OTPVerification from "@/components/Application/OTPVerification";
-import { useRouter } from "next/navigation"; 
+import { useRouter, useSearchParams } from "next/navigation"; 
 import { useDispatch } from "react-redux";
 import { login } from "@/store/reducer/authReducer";
 import { ADMIN_DASHBOARD } from "@/routes/AdminPanelRoutes";
