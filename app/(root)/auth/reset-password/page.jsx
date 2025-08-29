@@ -24,6 +24,9 @@ import OTPVerification from "@/components/Application/OTPVerification";
 
 const resetPassword = () => {
     const [emailVerificationLoading, setEmailVerificationLoading] = useState(false)
+    const [otpVerificationLoading, setOtpVerificationLoading] = useState(false)
+    const [otpEmail, setOtpEmail] = useState("");
+    
     const formSchema = zSchema.pick({
         email: true
     })
@@ -39,6 +42,34 @@ const resetPassword = () => {
     const handleEmailVerification = async (values) => {
 
     }
+
+    // 🔹 OTP verification
+      const handleOtpVerification = async (otpValue) => {
+        try {
+          setOtpVerificationLoading(true);
+          const { data: otpResponse } = await axios.post("/api/auth/", {
+            email: otpEmail,
+            otp: otpValue
+          });
+    
+          if (!otpResponse.success) {
+            throw new Error(otpResponse.message);
+          }
+    
+          showToast("success", otpResponse.message || "Login successful!");
+          
+          dispatch(login(otpResponse.data))
+    
+    
+          // Redirect to dashboard or home page after successful login
+          // router.push("/dashboard"); // Change this to your desired route
+        } catch (error) {
+          showToast("error", getErrorMessage(error));
+          throw error; // Re-throw to let OTP component handle reset
+        } finally {
+          setOtpVerificationLoading(false);
+        }
+      };
 
   return (
     <div>
@@ -87,7 +118,7 @@ const resetPassword = () => {
                     <ButtonLoading
                       loading={emailVerificationLoading}
                       type="submit"
-                      text="LoSend OTP"
+                      text="Send OTP"
                       className="w-full cursor-pointer"
                     />
                   </div>
@@ -107,14 +138,14 @@ const resetPassword = () => {
               </Form>
             </div>
           </>
-        ) : (
+        ) : 
           <OTPVerification
             email={otpEmail}
             onSubmit={handleOtpVerification}
             loading={otpVerificationLoading}
             onBack={() => setOtpEmail("")} // Add back button functionality
           />
-        )}
+        }
       </CardContent>
     </Card>
     </div>
