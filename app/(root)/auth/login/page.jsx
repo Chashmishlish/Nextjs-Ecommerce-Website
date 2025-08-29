@@ -24,6 +24,8 @@ import Link from "next/link";
 import { WEBSITE_REGISTER } from "@/routes/WebsiteRoute";
 import OTPVerification from "@/components/Application/OTPVerification";
 import { useRouter } from "next/navigation"; // Add this import
+import { useDispatch } from "react-redux";
+import { login } from "@/store/reducer/authReducer";
 
 // 🔹 Helper to extract error message safely
 const getErrorMessage = (error) => {
@@ -35,6 +37,7 @@ const getErrorMessage = (error) => {
 };
 
 const LogInPage = () => {
+  const dispatch = useDispatch()
   const [loading, setLoading] = useState(false);
   const [otpVerificationLoading, setOtpVerificationLoading] = useState(false);
   const [isTypePassword, setIsTypePassword] = useState(true);
@@ -67,6 +70,7 @@ const LogInPage = () => {
 
       setOtpEmail(values.email); // OTP email set karega
       showToast("success", loginResponse.message || "OTP sent to your email.");
+    
     } catch (error) {
       // Handle email not verified case differently
       if (error.response?.status === 401 && error.response.data.message.includes("not verified")) {
@@ -94,8 +98,11 @@ const LogInPage = () => {
 
       showToast("success", otpResponse.message || "Login successful!");
       
+      dispatch(login(otpResponse.data))
+
+
       // Redirect to dashboard or home page after successful login
-      router.push("/dashboard"); // Change this to your desired route
+      // router.push("/dashboard"); // Change this to your desired route
     } catch (error) {
       showToast("error", getErrorMessage(error));
       throw error; // Re-throw to let OTP component handle reset

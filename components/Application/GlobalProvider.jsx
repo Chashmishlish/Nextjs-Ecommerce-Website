@@ -1,13 +1,14 @@
-import { store } from '@/store/store'
+'use client'
+import { persistor, store } from '@/store/store'
 import React from 'react'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react'
-import loading from './loading'
-loading
+import Loading from './loading'
+
 const GlobalProvider = ({ children }) => {
   return (
     <Provider store={store}>
-        <PersistGate persistor={persistor} loading={<loading />}>
+        <PersistGate persistor={persistor} loading={<Loading />}>
             {children}
         </PersistGate>
     </Provider>

@@ -1,7 +1,7 @@
 import React from 'react'
 import loading from '@/public/assests/images/loading.svg'
 import Image from 'next/image'
-const loading = () => {
+const Loading = () => {
   return (
     <div className='h-screen w-screen flex justify-center
     items-start mt-12'>
@@ -11,4 +11,4 @@ const loading = () => {
   )
 }
 
-export default loading
+export default Loading
