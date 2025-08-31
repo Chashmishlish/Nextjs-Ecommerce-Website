@@ -1,16 +1,20 @@
+'use client'
 import BreadCrumb from '@/components/Application/Admin/BreadCrumb'
 import UploadMedia from '@/components/Application/Admin/UploadMedia'
 import { ADMIN_DASHBOARD } from '@/routes/AdminPanelRoutes'
-import React from 'react'
+import React, {useState} from 'react'
 import { Card,  CardContent,  CardHeader} from '@/components/ui/card'
 import { useInfiniteQuery } from '@tanstack/react-query'
+import axios from 'axios'
 
 const breadcrumbData = [
     {href: ADMIN_DASHBOARD, label: 'Home' },
     {href: '', label: 'Media' },
-
 ]
+
 const MediaPage = () => {
+
+    const [deleteType, setDeleteType] = useState('SD')  //bydefault SD
 
     const fetchMedia = async (page, deleteType) => {
         const {data: response} = await axios.get(`/api/media?page=${page}&&limit=10&&deleteType=${deleteType}`)
@@ -27,16 +31,21 @@ const MediaPage = () => {
         isFetchingNextPage,
         status,
     } = useInfiniteQuery({
-         queryKey: ['projects'],
-         queryFn: fetchProjects,
+         queryKey: ['media-data', deleteType],
+         queryFn: async ({ pageParam}) => await fetchMedia(pageParam, deleteType),
          initialPageParam: 0,
-         getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
+         getNextPageParam: (lastPage, pages) => {
+            const nextPage = pages.length 
+            return lastPage.hasMore ? nextPage : undefined 
+         },
   })
 
+  
+  console.log(data);
+  
 
-
-
-    return (
+  
+  return (
         <div>
             <BreadCrumb breadcrumbData={breadcrumbData}/>
             <Card className="py-0 rounded shadow-sm">
@@ -50,6 +59,20 @@ const MediaPage = () => {
                 </CardHeader>
                 <CardContent>
 
+    {
+        status === "pending"
+            ?
+            <div>Loading...</div>
+            :
+            status === 'error' ?
+            <div className='text-pink-500 text-sm'>
+                {error.message}
+            </div>
+            :
+            <div>
+
+            </div>
+    }
                 </CardContent>
             </Card>
         </div>
