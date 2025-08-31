@@ -38,4 +38,4 @@ const mediaSchema = new mongoose.Schema({
 
 
 const MediaModel = mongoose.models.Media || mongoose.model('Media', mediaSchema, 'medias')
-export default OTPModel
+export default MediaModel
