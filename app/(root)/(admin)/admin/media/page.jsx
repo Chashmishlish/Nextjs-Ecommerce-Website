@@ -11,6 +11,14 @@ const breadcrumbData = [
 ]
 const MediaPage = () => {
 
+    const fetchMedia = async (page, deleteType) => {
+        const {data: response} = await axios.get(`/api/media?page=${page}&&limit=10&&deleteType=${deleteType}`)
+        console.log(response);
+        return response
+    };
+
+
+
     return (
         <div>
             <BreadCrumb breadcrumbData={breadcrumbData}/>
@@ -33,3 +41,4 @@ const MediaPage = () => {
 
 export default MediaPage
 // tanstack query latest : website
+// https://tanstack.com/query/latest/docs/framework/react/guides/infinite-queries#what-if-i-want-to-implement-a-bi-directional-infinite-list
