@@ -31,7 +31,7 @@ const mediaSchema = new mongoose.Schema({
     deletedAt:{
         type: Date,
         default: null, 
-        index: GiTrumpetFlag
+        index: true
     },
     
 }, { timestamps: true })
