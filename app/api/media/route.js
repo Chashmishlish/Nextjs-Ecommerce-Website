@@ -1,14 +1,14 @@
 import { connectDB } from "@/lib/databaseConnection";
 import { catchError, isAuthenticated } from "@/lib/helperFunction";
 import MediaModel from "@/models/Media.model";
+import { NextResponse } from 'next/server';
 
 export async function GET(request) {
     try {
         const auth = await isAuthenticated('admin')
         if(!auth.isAuth){
-            return response (false, 403, 'unauthorized.')
+            return NextResponse.json({ success: false, statusCode: 403, message: 'unauthorized.' });
         }
-
         await connectDB()
 
         const searchParams = request.nextUrl.searchParams;
