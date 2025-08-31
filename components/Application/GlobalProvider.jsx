@@ -6,6 +6,7 @@ import { PersistGate } from 'redux-persist/integration/react'
 import Loading from './loading'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { Suspense } from 'react'
 
 const queryClient = new QueryClient()
 
