@@ -3,6 +3,7 @@ import UploadMedia from '@/components/Application/Admin/UploadMedia'
 import { ADMIN_DASHBOARD } from '@/routes/AdminPanelRoutes'
 import React from 'react'
 import { Card,  CardContent,  CardHeader} from '@/components/ui/card'
+import { useInfiniteQuery } from '@tanstack/react-query'
 
 const breadcrumbData = [
     {href: ADMIN_DASHBOARD, label: 'Home' },
@@ -16,6 +17,22 @@ const MediaPage = () => {
         console.log(response);
         return response
     };
+
+      const {
+        data,
+        error,
+        fetchNextPage,
+        hasNextPage,
+        isFetching,
+        isFetchingNextPage,
+        status,
+    } = useInfiniteQuery({
+         queryKey: ['projects'],
+         queryFn: fetchProjects,
+         initialPageParam: 0,
+         getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
+  })
+
 
 
 
