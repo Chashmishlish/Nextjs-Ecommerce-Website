@@ -12,7 +12,13 @@ import { showToast } from '@/lib/showToast';
 
 const Media = ({ media, handleDelete, deleteType, selectedMedia, setSelectedMedia }) => {
     const handleCheck = () => {
-
+        let newSelectedMedia = []
+        if (selectedMedia.includes(media._id)){
+            newSelectedMedia = selectedMedia.filter(m => m !== media._id)
+        }else {
+            newSelectedMedia = [...selectedMedia, media._id]
+        }
+        setSelectedMedia(newSelectedMedia)
     }
 
     const handleCopyLink =  async (url) => {
@@ -26,7 +32,7 @@ const Media = ({ media, handleDelete, deleteType, selectedMedia, setSelectedMedi
                 <Checkbox
                     checked={selectedMedia.includes(media._id)}
                     onCheckedChange={handleCheck}
-                    className="border-primary"
+                    className="border-primary cursor-pointer"
                 />
             </div>
 
