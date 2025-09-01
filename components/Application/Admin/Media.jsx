@@ -1,12 +1,23 @@
 import React from 'react'
 import { Checkbox } from '@/components/ui/checkbox'
 import Image from 'next/image'
-import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { HiDotsVertical } from "react-icons/hi";
+import Link from 'next/link';
+import { ADMIN_MEDIA_EDIT } from '@/routes/AdminPanelRoutes';
+import { MdEdit } from "react-icons/md";
+import { BsLink45Deg } from "react-icons/bs";
+import { IoIosTrash } from "react-icons/io";
+import { showToast } from '@/lib/showToast';
 
 const Media = ({ media, handleDelete, deleteType, selectedMedia, setSelectedMedia }) => {
     const handleCheck = () => {
 
+    }
+
+    const handleCopyLink =  async (url) => {
+        await navigator.clipboard.writeText(url)
+        showToast('success', 'Link copied.')
     }
 
     return (
@@ -26,6 +37,27 @@ const Media = ({ media, handleDelete, deleteType, selectedMedia, setSelectedMedi
                             <HiDotsVertical color='#ffff' />
                         </span>
                     </DropdownMenuTrigger>
+                    <DropdownMenuContent align='start'>
+                        {deleteType === 'SD' &&
+                            <>
+                                <DropdownMenuItem asChild className='cursor-pointer'>
+                                    <Link href={ADMIN_MEDIA_EDIT(media._id)}>
+                                        <MdEdit />
+                                        Edit
+                                    </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className='cursor-pointer' onClick={() => handleCopyLink(media.secure_url)}>
+                                    <BsLink45Deg />
+                                    Copy Link
+                                </DropdownMenuItem>
+                            </>
+                        }
+
+                        <DropdownMenuItem className='cursor-pointer'>
+                            <IoIosTrash color='red' />
+                            {deleteType === 'SD' ? 'Move Into Trash' : 'Delete Permanently'}
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
                 </DropdownMenu>
             </div>
 
