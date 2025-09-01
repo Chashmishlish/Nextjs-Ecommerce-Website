@@ -12,6 +12,7 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
+import useDeleteMutation from '@/hooks/useDeleteMutation'
 
 const breadcrumbData = [
     { href: ADMIN_DASHBOARD, label: 'Home' },
@@ -64,6 +65,7 @@ const MediaPage = () => {
     })
     //   console.log(data);
 
+    const deleteMutation = useDeleteMutation('media-data', '/api/media/delete' )
     const handleDelete = (selectedMedia, deleteType) => {
         let c = true
         if(deleteType === 'PD') {
@@ -72,8 +74,10 @@ const MediaPage = () => {
 
         if(c){
             // folder hook>useDeleteMutation
-            
+            deleteMutation.mutate({selectedMedia, deleteType})
         }
+        setSelectAll(false)
+        setSelectedMedia([])
     }
 
     const handleSelectAll = () => {
