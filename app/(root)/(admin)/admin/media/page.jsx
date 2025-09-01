@@ -65,7 +65,15 @@ const MediaPage = () => {
     //   console.log(data);
 
     const handleDelete = (selectedMedia, deleteType) => {
+        let c = true
+        if(deleteType === 'PD') {
+            c = confirm ('Are you sure you want to delete the data permanently?')
+        }
 
+        if(c){
+            // folder hook>useDeleteMutation
+            
+        }
     }
 
     const handleSelectAll = () => {
