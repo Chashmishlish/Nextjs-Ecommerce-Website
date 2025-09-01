@@ -75,6 +75,9 @@ const MediaPage = () => {
     useEffect(() => {
         if (selectAll){
             const ids = data.pages.flatMap(page => page.mediaData.map(media => media._id));
+            setSelectedMedia(ids)
+        }else{
+            setSelectedMedia([])            
         }
     }, [selectAll] )
 
