@@ -6,6 +6,7 @@ import React, {useState} from 'react'
 import { Card,  CardContent,  CardHeader} from '@/components/ui/card'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import axios from 'axios'
+import Media from '@/components/Application/Admin/Media'
 
 const breadcrumbData = [
     {href: ADMIN_DASHBOARD, label: 'Home' },
@@ -15,6 +16,7 @@ const breadcrumbData = [
 const MediaPage = () => {
 
     const [deleteType, setDeleteType] = useState('SD')  //bydefault SD
+    const [selectedMedia, setSelectedMedia] = useState([])  
 
     const fetchMedia = async (page, deleteType) => {
         const {data: response} = await axios.get(`/api/media?page=${page}&&limit=10&&deleteType=${deleteType}`)
@@ -39,10 +41,11 @@ const MediaPage = () => {
             return lastPage.hasMore ? nextPage : undefined 
          },
   })
+//   console.log(data);
+  
+const handleDelete = () => {
 
-  
-  console.log(data);
-  
+}
 
   
   return (
@@ -75,7 +78,13 @@ const MediaPage = () => {
                     <React.Fragment key={index}>
                         {
                             page?.mediaData?.map((media) => (
-                                <div key={media._id}> {media._id} </div>
+                                <Media key={media._id}
+                                 media = {media}
+                                 handleDelete = {handleDelete}
+                                 deleteType = { deleteType }
+                                 selectedMedia = { selectedMedia }
+                                 setSelectedMedia = {setSelectedMedia}
+                                />
                             ))
                         }
                     </React.Fragment>
