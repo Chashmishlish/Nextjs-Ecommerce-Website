@@ -130,7 +130,7 @@ const MediaPage = () => {
                         </div>
                     </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className='pb-5'>
 
                     {selectedMedia.length > 0
                         &&
@@ -209,7 +209,7 @@ const MediaPage = () => {
                     }
 
                     {hasNextPage &&
-                    <ButtonLoading type="button" loading={isFetching} onClick={() => fetchNextPage()} text="Load More"/>
+                    <ButtonLoading type="button" className="cursor-pointer" loading={isFetching} onClick={() => fetchNextPage()} text="Load More"/>
                     }
                 </CardContent>
             </Card>
