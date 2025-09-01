@@ -4,7 +4,7 @@ import UploadMedia from '@/components/Application/Admin/UploadMedia'
 import { ADMIN_DASHBOARD, ADMIN_MEDIA_SHOW } from '@/routes/AdminPanelRoutes'
 import React, { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { useInfiniteQuery } from '@tanstack/react-query'
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import Media from '@/components/Application/Admin/Media'
 import { Button } from '@/components/ui/button'
@@ -13,6 +13,7 @@ import { useSearchParams } from 'next/navigation'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import useDeleteMutation from '@/hooks/useDeleteMutation'
+import ButtonLoading from '@/components/Application/ButtonLoading'
 
 const breadcrumbData = [
     { href: ADMIN_DASHBOARD, label: 'Home' },
@@ -20,7 +21,7 @@ const breadcrumbData = [
 ]
 
 const MediaPage = () => {
-
+    const queryClient = useQueryClient();
     const [deleteType, setDeleteType] = useState('SD')  //bydefault SD
     const [selectedMedia, setSelectedMedia] = useState([])
     const [selectAll, setSelectAll] = useState(false)
@@ -52,7 +53,6 @@ const MediaPage = () => {
         fetchNextPage,
         hasNextPage,
         isFetching,
-        isFetchingNextPage,
         status,
     } = useInfiniteQuery({
         queryKey: ['media-data', deleteType],
@@ -94,7 +94,7 @@ const MediaPage = () => {
     }, [selectAll])
 
     // console.log(data);
-    
+
 
     return (
         <div>
@@ -108,7 +108,7 @@ const MediaPage = () => {
 
                         </h4>
                         <div className='flex items-center gap-5'>
-                            {deleteType === 'SD' && <UploadMedia />}
+                            {deleteType === 'SD' && <UploadMedia isMultiple={true} queryClient={queryClient} />}
 
 
                             <div className='flex gap-3'>
@@ -184,7 +184,7 @@ const MediaPage = () => {
                                 </div>
                                 :
                                 <>
-                                {data.pages.flatMap(page => page.mediaData.map(media => media._id)).length === 0 && <div > 🚮 Trash is empty! </div>}
+                                    {data.pages.flatMap(page => page.mediaData.map(media => media._id)).length === 0 && <div > Data not found. </div>}
                                     <div className='grid lg:grid-cols-5 sm:grid-cols-3 grid-cols-2 gap-2 mb-5'>
                                         {
                                             data?.pages?.map((page, index) => (
@@ -206,6 +206,10 @@ const MediaPage = () => {
                                     </div>
                                 </>
 
+                    }
+
+                    {hasNextPage &&
+                    <ButtonLoading type="button" loading={isFetching} onClick={() => fetchNextPage()} text="Load More"/>
                     }
                 </CardContent>
             </Card>
