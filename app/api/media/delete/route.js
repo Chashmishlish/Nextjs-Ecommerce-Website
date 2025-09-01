@@ -1,6 +1,8 @@
+import cloudinary from "@/lib/cloudinary";
 import { connectDB } from "@/lib/databaseConnection";
 import { catchError, isAuthenticated, response } from "@/lib/helperFunction";
 import MediaModel from "@/models/Media.model";
+import mongoose from "mongoose";
 
 // This is an API route handler that performs either a soft delete (SD) 
 // or a restore (RSD) operation on media items.
@@ -36,7 +38,7 @@ export async function PUT(request) {
             await MediaModel.updateMany({ _id: { $in: ids } }, { $set: { deletedAt: null } });
         }
 
-        return response(true, 200, 'Media updated successfully.');
+        return response(true, 200, deleteType === 'SD'? ' Data moved into trash.' : "Data Restored" );
 
     } catch (error) {
         return catchError(error)
@@ -44,6 +46,10 @@ export async function PUT(request) {
 }
 
 export async function DELETE(request) {
+
+    const session = await mongoose.startSession()
+    session.startTransaction()
+
     try {
         const auth = await isAuthenticated('admin')
         if (!auth.isAuth) {
@@ -60,7 +66,7 @@ export async function DELETE(request) {
             return response(false, 400, 'Invalid or empty ID list.')
         }
 
-        const media = await MediaModel.find({ _id: { $in: ids } }).lean()
+        const media = await MediaModel.find({ _id: { $in: ids } }).session(session).lean()
         if (!media.length) {
             return response(false, 404, 'Data not found.')
         }
@@ -69,8 +75,26 @@ export async function DELETE(request) {
             return response(false, 400, 'Invalid delete operation. Delete type should be PD for this route. ')
         }
 
-        await MediaModel.deleteMany({ _ids: { $in: ids } })
+        await MediaModel.deleteMany({ _ids: { $in: ids } }).session(session)
+
+        // delete all media from cloudinary.
+        const publicIds = media.maps(m => m.public_id)
+
+        try {
+            await cloudinary.api.delete_resources(publicIds)
+        } catch (error) {
+            // session revert (vid: 2:34:30 , pt:2)
+            await session.abortTransaction()
+            session.endSession()
+        }
+
+        await session.commitTransaction()
+        session.endSession()
+
+        return response (true, 200, "Data has been deleted permanently" )
     } catch (error) {
+        await session.commitTransaction()
+        session.endSession()
         return catchError(error)
     }
 }
