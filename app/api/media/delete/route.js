@@ -38,7 +38,7 @@ export async function PUT(request) {
             await MediaModel.updateMany({ _id: { $in: ids } }, { $set: { deletedAt: null } });
         }
 
-        return response(true, 200, deleteType === 'SD'? ' Data moved into trash.' : "Data Restored" );
+        return response(true, 200, deleteType === 'SD' ? ' Data moved into trash.' : "Data Restored");
 
     } catch (error) {
         return catchError(error)
@@ -78,7 +78,7 @@ export async function DELETE(request) {
         await MediaModel.deleteMany({ _ids: { $in: ids } }).session(session)
 
         // delete all media from cloudinary.
-        const publicIds = media.maps(m => m.public_id)
+        const publicIds = media.map(m => m.public_id)
 
         try {
             await cloudinary.api.delete_resources(publicIds)
@@ -91,7 +91,7 @@ export async function DELETE(request) {
         await session.commitTransaction()
         session.endSession()
 
-        return response (true, 200, "Data has been deleted permanently" )
+        return response(true, 200, "Data has been deleted permanently")
     } catch (error) {
         await session.commitTransaction()
         session.endSession()
