@@ -93,6 +93,9 @@ const MediaPage = () => {
         }
     }, [selectAll])
 
+    // console.log(data);
+    
+
     return (
         <div>
             <BreadCrumb breadcrumbData={breadcrumbData} />
@@ -180,25 +183,29 @@ const MediaPage = () => {
                                     {error.message}
                                 </div>
                                 :
-                                <div className='grid lg:grid-cols-5 sm:grid-cols-3 grid-cols-2 gap-2 mb-5'>
-                                    {
-                                        data?.pages?.map((page, index) => (
-                                            <React.Fragment key={index}>
-                                                {
-                                                    page?.mediaData?.map((media) => (
-                                                        <Media key={media._id}
-                                                            media={media}
-                                                            handleDelete={handleDelete}
-                                                            deleteType={deleteType}
-                                                            selectedMedia={selectedMedia}
-                                                            setSelectedMedia={setSelectedMedia}
-                                                        />
-                                                    ))
-                                                }
-                                            </React.Fragment>
-                                        ))
-                                    }
-                                </div>
+                                <>
+                                {data.pages.flatMap(page => page.mediaData.map(media => media._id)).length === 0 && <div > 🚮 Trash is empty! </div>}
+                                    <div className='grid lg:grid-cols-5 sm:grid-cols-3 grid-cols-2 gap-2 mb-5'>
+                                        {
+                                            data?.pages?.map((page, index) => (
+                                                <React.Fragment key={index}>
+                                                    {
+                                                        page?.mediaData?.map((media) => (
+                                                            <Media key={media._id}
+                                                                media={media}
+                                                                handleDelete={handleDelete}
+                                                                deleteType={deleteType}
+                                                                selectedMedia={selectedMedia}
+                                                                setSelectedMedia={setSelectedMedia}
+                                                            />
+                                                        ))
+                                                    }
+                                                </React.Fragment>
+                                            ))
+                                        }
+                                    </div>
+                                </>
+
                     }
                 </CardContent>
             </Card>

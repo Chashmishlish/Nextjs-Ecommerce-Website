@@ -75,7 +75,7 @@ export async function DELETE(request) {
             return response(false, 400, 'Invalid delete operation. Delete type should be PD for this route. ')
         }
 
-        await MediaModel.deleteMany({ _ids: { $in: ids } }).session(session)
+        await MediaModel.deleteMany({ _id: { $in: ids } }).session(session)
 
         // delete all media from cloudinary.
         const publicIds = media.map(m => m.public_id)
