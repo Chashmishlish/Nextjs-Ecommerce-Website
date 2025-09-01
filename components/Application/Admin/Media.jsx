@@ -15,6 +15,7 @@ const Media = ({ media, handleDelete, deleteType, selectedMedia, setSelectedMedi
                 <Checkbox
                     checked={selectedMedia.includes(media._id)}
                     onCheckedChange={handleCheck}
+                    className="border-primary"
                 />
             </div>
 
@@ -26,6 +27,11 @@ const Media = ({ media, handleDelete, deleteType, selectedMedia, setSelectedMedi
                         </span>
                     </DropdownMenuTrigger>
                 </DropdownMenu>
+            </div>
+
+            {/* for opacity of card */}
+            <div className='w-full h-full absolute z-10 transition-all duration-150 ease-in group-hover:bg-black/30'>
+
             </div>
 
             <div>
