@@ -69,8 +69,18 @@ const MediaPage = () => {
                 {error.message}
             </div>
             :
-            <div>
-
+            <div className='grid lg:grid-cols-5 sm:grid-cols-3 grid-cols-2 gap-2 mb-5'>
+                {
+                data?.pages?.map((page, index) => (
+                    <React.Fragment key={index}>
+                        {
+                            page?.mediaData?.map((media) => (
+                                <div key={media._id}> {media._id} </div>
+                            ))
+                        }
+                    </React.Fragment>
+                  ))
+                }
             </div>
     }
                 </CardContent>
