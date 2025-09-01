@@ -5,15 +5,15 @@ import MediaModel from '@/models/Media.model'
 
 export async function POST(request) {
         // const payload = await request.getJson()
-        const payload = await request.json(); // FIXED
+        const payload = await request.json(); 
 
 
     try {
         const auth = await isAuthenticated('admin')
-        console.log(auth)
+        // console.log(auth)
         if(!auth.isAuth){
             return response (false, 403, 'Unauthorized.')
-        }
+        } 
 
         await connectDB()
         const newMedia = await MediaModel.insertMany(payload)
