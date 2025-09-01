@@ -42,7 +42,7 @@ const MediaPage = () => {
 
     const fetchMedia = async (page, deleteType) => {
         const { data: response } = await axios.get(`/api/media?page=${page}&&limit=10&&deleteType=${deleteType}`)
-        console.log(response);
+        // console.log(response);
         return response
     };
 
@@ -65,16 +65,16 @@ const MediaPage = () => {
     })
     //   console.log(data);
 
-    const deleteMutation = useDeleteMutation('media-data', '/api/media/delete' )
-    const handleDelete = (selectedMedia, deleteType) => {
+    const deleteMutation = useDeleteMutation('media-data', '/api/media/delete')
+    const handleDelete = (ids, deleteType) => {
         let c = true
-        if(deleteType === 'PD') {
-            c = confirm ('Are you sure you want to delete the data permanently?')
+        if (deleteType === 'PD') {
+            c = confirm('Are you sure you want to delete the data permanently?')
         }
 
-        if(c){
+        if (c) {
             // folder hook>useDeleteMutation
-            deleteMutation.mutate({selectedMedia, deleteType})
+            deleteMutation.mutate({ ids, deleteType })
         }
         setSelectAll(false)
         setSelectedMedia([])
@@ -85,13 +85,13 @@ const MediaPage = () => {
     }
 
     useEffect(() => {
-        if (selectAll){
+        if (selectAll) {
             const ids = data.pages.flatMap(page => page.mediaData.map(media => media._id));
             setSelectedMedia(ids)
-        }else{
-            setSelectedMedia([])            
+        } else {
+            setSelectedMedia([])
         }
-    }, [selectAll] )
+    }, [selectAll])
 
     return (
         <div>
@@ -144,7 +144,7 @@ const MediaPage = () => {
                             <div className='flex gap-2'>
                                 {deleteType === 'SD' ? (
                                     <Button
-                                        variant='destructive'  className='cursor-pointer'
+                                        variant='destructive' className='cursor-pointer'
                                         onClick={() => handleDelete(selectedMedia, deleteType)}
                                     >
                                         Move Into Trash

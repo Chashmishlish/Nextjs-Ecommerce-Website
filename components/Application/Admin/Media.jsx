@@ -10,6 +10,7 @@ import { BsLink45Deg } from "react-icons/bs";
 import { IoIosTrash } from "react-icons/io";
 import { showToast } from '@/lib/showToast';
 
+
 const Media = ({ media, handleDelete, deleteType, selectedMedia, setSelectedMedia }) => {
     const handleCheck = () => {
         let newSelectedMedia = []
@@ -59,7 +60,7 @@ const Media = ({ media, handleDelete, deleteType, selectedMedia, setSelectedMedi
                             </>
                         }
 
-                        <DropdownMenuItem className='cursor-pointer'>
+                        <DropdownMenuItem className='cursor-pointer' onClick={()=>handleDelete([media._id], deleteType)}>
                             <IoIosTrash color='red' />
                             {deleteType === 'SD' ? 'Move Into Trash' : 'Delete Permanently'}
                         </DropdownMenuItem>
