@@ -8,7 +8,7 @@ const Media = ({ media, handleDelete, deleteType, selectedMedia, setSelectedMedi
     }
  
     return (
-    <div className='border border-gray-200 dark:border-gray-800 relative group rounded over-flow hidden'>
+    <div className='border border-gray-200 dark:border-gray-800 relative group rounded overflow'>
         <div className='absolute top-2 left-2 z-30'>
             <Checkbox
                 checked={selectedMedia.includes(media._id)}
