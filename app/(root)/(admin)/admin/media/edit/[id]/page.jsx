@@ -1,5 +1,5 @@
 'use client'
-import { use } from 'react'
+import { use, useEffect } from 'react'
 import { useState } from "react"; // ADD THIS
 import useFetch from '@/hooks/useFetch'
 import { ADMIN_DASHBOARD, ADMIN_MEDIA_SHOW } from '@/routes/AdminPanelRoutes'
@@ -61,18 +61,26 @@ const EditMedia = ({ params }) => {
         },
     });
 
+    useEffect(() => {
+        if (mediaData && mediaData.success) {
+            const data = mediaData.data
+            form.reset({
+                _id: data._id,
+                alt: data.alt,
+                title: data.title
+            })
+        }
+    }, [mediaData])
+
     const onSubmit = async (values) => {
         try {
             setLoading(true);
-            const { data: loginResponse } = await axios.post("/api/auth/login", values);
+            const { data: response } = await axios.put("/api/media/update", values);
 
-            if (!loginResponse.success) {
-                throw new Error(loginResponse.message);
+            if (!response.success) {
+                throw new Error(response.message);
             }
-
-            setOtpEmail(values.email); // OTP email set karega
-            showToast("success", loginResponse.message || "OTP sent to your email.");
-
+            showToast('success', response.message)
         } catch (error) {
             if (error.response?.status === 401 && error.response.data.message.includes("not verified")) {
                 showToast("info", error.response.data.message);
@@ -98,13 +106,13 @@ const EditMedia = ({ params }) => {
                         <form onSubmit={form.handleSubmit(onSubmit)}>
                             <div className="mb-5">
                                 <Image
-                                src={mediaData?.data?.secure_url || imgPlaceholdern}
-                                width={150}
-                                height={150}
-                                alt={mediaData?.alt || 'Image'}
+                                    src={mediaData?.data?.secure_url || imgPlaceholdern}
+                                    width={150}
+                                    height={150}
+                                    alt={mediaData?.alt || 'Image'}
                                 />
                             </div>
-                             <div className="mb-5">
+                            <div className="mb-5">
                                 <FormField
                                     control={form.control}
                                     name="title"
@@ -142,7 +150,7 @@ const EditMedia = ({ params }) => {
                                     )}
                                 />
                             </div>
-                
+
                             <div className="mb-3">
                                 <ButtonLoading
                                     loading={loading}

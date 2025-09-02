@@ -6,6 +6,8 @@ import { isValidObjectId } from "mongoose"
 
 export async function GET(request, {params}){
     try {
+
+ // Authenticate user (admin only)
         const auth = await isAuthenticated('admin')
         if(!auth.isAuth){
             return response(false, 403, 'Unauthorized.')
@@ -15,7 +17,9 @@ export async function GET(request, {params}){
 
         // const getParams = await PathParams
         // const id = getParams.id;
-        const id = params.id;
+        // const id = params.id;
+         const { id } = await params;
+        console.log("Fetched ID:", id);
 
         const filter = {
             deletedAt: null 
