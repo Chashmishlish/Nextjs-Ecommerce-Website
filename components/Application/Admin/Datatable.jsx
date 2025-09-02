@@ -9,6 +9,10 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
 import useDeleteMutation from '@/hooks/useDeleteMutation'
+import ButtonLoading from '../ButtonLoading'
+import SaveAltIcon from '@mui/icons-material/SaveAlt';
+import { showToast } from '@/lib/showToast'
+import { download, generateCsv, mkConfig } from 'export-to-csv'
 // tanstack querykey leta hai
 const Datatable = ({
     queryKey,
@@ -34,13 +38,19 @@ const Datatable = ({
     // Row selection state
     const [rowSelection, setRowSelection] = useState({})
 
+    //Export loading state
+    const [exportLoading, setExportLoading] = useState(false)
+
+
     // handle selete method
     const deleteMutation = useDeleteMutation(queryKey, deleteEndpoint)
+    
+    // delete method
     const handleDelete = (ids, deleteType) => {
-        let c 
+        let c
         if (deleteType === 'PD') {
             c = confirm('Are you sure you want to delete the data permanently?')
-        }else{
+        } else {
             c = confirm('Are you sure you want to move data to trash?')
         }
 
@@ -51,9 +61,42 @@ const Datatable = ({
         }
     }
 
-    // const handleSelectAll = () => {
-    //     setSelectAll(!selectAll)
-    // }
+    // export method 
+
+    const handleExport = async (selectedRows) => {
+        setExportLoading(true)
+        try {
+            const csvConfig = mkConfig({
+                fieldSeparator: ',' ,
+                decimalSeparator: ',' ,
+                useKeyAsHeaders: true ,
+                filename: 'csv-data'
+            })
+
+            let csv 
+            if(Object.keys(rowSelection).length > 0){
+                // export only seleted rows
+                const rowData = selectedRows.map((row) => row.original)
+                csv = generateCsv(csvConfig)(rowData)
+            }else {
+                //export all data
+                const { data: response } = await axios.get(exportEndpoint)
+                if(!response.success){
+                    throw new Error(response.message)
+                }
+                const rowData = response.data
+                csv = generateCsv(csvConfig)(rowData)
+            }
+
+            download(csvConfig)(csv)
+
+        } catch (error) {
+            console.log(error);
+            showToast('error', error.message)
+        }finally{
+            setExportLoading(false)
+        }
+    }
 
     // Data fetching logics
     const {
@@ -84,32 +127,32 @@ const Datatable = ({
 
     // init table 
     const table = useMaterialReactTable({
-         columns: columnsConfig,
-         data,
-         enableRowSelection: true,
-         columnFilterDisplayMode: 'popover',
-         paginationDisplayMode: 'pages',
-         enableColumnOrdering: true,
-         enableStickyHeader: true,
-         enableStickyFooter: true,
-         initialState: { showColumnFilters: true },
-         manualFiltering: true,
-         manualPagination: true,
-         manualSorting: true,
-         muiToolbarAlertBannerProps: isError
+        columns: columnsConfig,
+        data,
+        enableRowSelection: true,
+        columnFilterDisplayMode: 'popover',
+        paginationDisplayMode: 'pages',
+        enableColumnOrdering: true,
+        enableStickyHeader: true,
+        enableStickyFooter: true,
+        initialState: { showColumnFilters: true },
+        manualFiltering: true,
+        manualPagination: true,
+        manualSorting: true,
+        muiToolbarAlertBannerProps: isError
             ? {
                 color: 'error',
                 children: 'Error loading data',
             }
             : undefined,
 
-         onColumnFiltersChange: setColumnFilters,
-         onGlobalFilterChange: setGlobalFilter,
-         onPaginationChange: setPagination,
-         onSortingChangeange: setSorting,
-         rowCount: data?.meta?.totalRowCount ?? 0,
-         onRowSelectionChange: setRowSelection,
-         state: {
+        onColumnFiltersChange: setColumnFilters,
+        onGlobalFilterChange: setGlobalFilter,
+        onPaginationChange: setPagination,
+        onSortingChangeange: setSorting,
+        rowCount: data?.meta?.totalRowCount ?? 0,
+        onRowSelectionChange: setRowSelection,
+        state: {
             columnFilters,
             globalFilter,
             isLoading,
@@ -118,11 +161,11 @@ const Datatable = ({
             showProgressBars: isRefetching,
             sorting,
             rowSelection
-         },
+        },
 
-         getRowId: (originalRow) => originalRow._id,
+        getRowId: (originalRow) => originalRow._id,
 
-         renderToolbarInternalActions: ({ table }) => {
+        renderToolbarInternalActions: ({ table }) => {
             <>
                 {/* built-in buttons */}
                 <MRT_ToggleGlobalFilterButton table={table} />
@@ -141,8 +184,8 @@ const Datatable = ({
                     </Tooltip>
                 )}
 
-                {deleteType === 'SD' 
-                && 
+                {deleteType === 'SD'
+                    &&
                     <Tooltip title="Delete All">
                         <IconButton
                             disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
@@ -153,8 +196,8 @@ const Datatable = ({
                     </Tooltip>
                 }
 
-                {deleteType === 'PD' 
-                && 
+                {deleteType === 'PD'
+                    &&
                     <>
                         <Tooltip title="Restored Data">
                             <IconButton
@@ -176,13 +219,29 @@ const Datatable = ({
                     </>
                 }
             </>
-       },
-  });
+        },
 
-    return 
-        <div>
-            Datatable
-        </div>
+        enableRowActions: true,
+        positionActionsColumn: 'last',
+        renderRowActionMenuItems: ({ row }) => createAction(row, deleteType, handleDelete),
+    
+        renderTopToolbarCustomActions: ({table}) => {
+            <Tooltip>
+                <ButtonLoading
+                    type="button"
+                    text={<><SaveAltIcon/> Export </>}
+                    loading={exportLoading}
+                    onClick={ () => handleExport(table.getSelectedRowModel().rows)}
+                />
+            </Tooltip>
+        }
+    });
+
+    return
+    <div>
+        Datatable
+    </div>
 }
 
 export default Datatable
+    // export method : https://www.npmjs.com/package/export-to-csv
