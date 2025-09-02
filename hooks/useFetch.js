@@ -1,8 +1,7 @@
-const { default: axios } = require("axios")
-const { useState, useEffect, useMemo } = require("react")
-
+import {useState, useMemo, useEffect} from 'react'
+import axios from 'axios'
 // app / (root) / (admin) / admin / media / edit / [id] / page.jsx
-const useFetch = (url, method = "GET", option = {}) => {
+const useFetch = (url, method = "GET", options = {}) => {
     const [data, setData] = useState(null)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
