@@ -8,6 +8,7 @@ import RecyclingIcon from '@mui/icons-material/Recycling';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
+import useDeleteMutation from '@/hooks/useDeleteMutation'
 // tanstack querykey leta hai
 const Datatable = ({
     queryKey,
@@ -31,12 +32,28 @@ const Datatable = ({
     })
 
     // Row selection state
-    const [rowSelection, setRowSelection] = useState()
+    const [rowSelection, setRowSelection] = useState({})
 
     // handle selete method
-    const handleDelete = () => {
+    const deleteMutation = useDeleteMutation(queryKey, deleteEndpoint)
+    const handleDelete = (ids, deleteType) => {
+        let c 
+        if (deleteType === 'PD') {
+            c = confirm('Are you sure you want to delete the data permanently?')
+        }else{
+            c = confirm('Are you sure you want to move data to trash?')
+        }
 
+        if (c) {
+            // folder hook>useDeleteMutation
+            deleteMutation.mutate({ ids, deleteType })
+            setRowSelection({})
+        }
     }
+
+    // const handleSelectAll = () => {
+    //     setSelectAll(!selectAll)
+    // }
 
     // Data fetching logics
     const {
@@ -124,16 +141,17 @@ const Datatable = ({
                     </Tooltip>
                 )}
 
-                {deleteType === 'SD' && (
+                {deleteType === 'SD' 
+                && 
                     <Tooltip title="Delete All">
                         <IconButton
                             disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
-                            onClick={() => handleDelete()}
+                            onClick={() => handleDelete(Object.keys(rowSelection), deleteType)}
                         >
                             <DeleteIcon />
                         </IconButton>
                     </Tooltip>
-                )}
+                }
 
                 {deleteType === 'PD' 
                 && 
@@ -141,7 +159,7 @@ const Datatable = ({
                         <Tooltip title="Restored Data">
                             <IconButton
                                 disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
-                                onClick={() => handleDelete()}
+                                onClick={() => handleDelete(Object.keys(rowSelection), 'RSD')}
                             >
                                 <RestoreFromTrashIcon />
                             </IconButton>
@@ -150,7 +168,7 @@ const Datatable = ({
                         <Tooltip title="Delete Permanently">
                             <IconButton
                                 disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
-                                onClick={() => handleDelete()}
+                                onClick={() => handleDelete(Object.keys(rowSelection), deleteType)}
                             >
                                 <DeleteForeverIcon />
                             </IconButton>
