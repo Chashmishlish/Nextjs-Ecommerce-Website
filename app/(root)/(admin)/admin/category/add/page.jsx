@@ -41,7 +41,8 @@ const addCategory = () => {
  useEffect (() => {
     const name = form.getValues('name')
     if(name){
-      form.setValue('slug', slugify(name))
+      form.setValue('slug', slugify(name, { lower: true }));
+      // form.setValue('slug', slugify(name).toLowerCase())
     }
   }, [form.watch('name')])
 
