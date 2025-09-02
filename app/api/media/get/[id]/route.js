@@ -2,7 +2,7 @@ import { connectDB } from "@/lib/databaseConnection"
 import { catchError, isAuthenticated, response } from "@/lib/helperFunction"
 import MediaModel from "@/models/Media.model"
 import { isValidObjectId } from "mongoose"
-import { PathParamsContext } from "next/dist/shared/lib/hooks-client-context.shared-runtime"
+// import { PathParamsContext } from "next/dist/shared/lib/hooks-client-context.shared-runtime"
 
 export async function GET(request, {params}){
     try {
@@ -13,8 +13,9 @@ export async function GET(request, {params}){
 
         await connectDB()
 
-        const getParams = await PathParams
-        const id = getParams.id
+        // const getParams = await PathParams
+        // const id = getParams.id;
+        const id = params.id;
 
         const filter = {
             deletedAt: null 
@@ -24,7 +25,7 @@ export async function GET(request, {params}){
             return response (false, 400, 'Invalid Object ID.')
         }
 
-        filter.id = id
+        filter._id = id
 
         const getMedia = await MediaModel.findOne(filter).lean()
 

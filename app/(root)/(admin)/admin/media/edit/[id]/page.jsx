@@ -14,7 +14,8 @@ import { useForm } from 'react-hook-form'
 import { zSchema } from '@/lib/zodSchema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { showToast } from "@/lib/showToast";
-
+import Image from 'next/image';
+import imgPlaceholdern from '@/public/assests/images/img-placeholder.webp'
 
 const breadCrumbData = [
     {
@@ -54,13 +55,13 @@ const EditMedia = ({ params }) => {
     const form = useForm({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            email: "",
-            password: "",
+            _id: "",
+            alt: "",
+            title: ""
         },
     });
 
-    //   🔹 Login: check email + password, then send OTP
-    const handleLoginSubmit = async (values) => {
+    const onSubmit = async (values) => {
         try {
             setLoading(true);
             const { data: loginResponse } = await axios.post("/api/auth/login", values);
@@ -92,19 +93,28 @@ const EditMedia = ({ params }) => {
                     <h4 className='text-xl font-semibold'>Edit Media </h4>
                 </CardHeader>
                 <CardContent className='pb-5'>
+
                     <Form {...form}>
-                        <form onSubmit={form.handleSubmit(handleLoginSubmit)}>
-                            <div className="mb-3">
+                        <form onSubmit={form.handleSubmit(onSubmit)}>
+                            <div className="mb-5">
+                                <Image
+                                src={mediaData?.data?.secure_url || imgPlaceholdern}
+                                width={150}
+                                height={150}
+                                alt={mediaData?.alt || 'Image'}
+                                />
+                            </div>
+                             <div className="mb-5">
                                 <FormField
                                     control={form.control}
-                                    name="email"
+                                    name="title"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Email</FormLabel>
+                                            <FormLabel>Title</FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    type="email"
-                                                    placeholder="example@gmail.com"
+                                                    type="text"
+                                                    placeholder="Enter Title"
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -113,13 +123,32 @@ const EditMedia = ({ params }) => {
                                     )}
                                 />
                             </div>
-
+                            <div className="mb-5">
+                                <FormField
+                                    control={form.control}
+                                    name="alt"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Alt</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type="text"
+                                                    placeholder="Enter alt"
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+                
                             <div className="mb-3">
                                 <ButtonLoading
                                     loading={loading}
                                     type="submit"
-                                    text="Login"
-                                    className="w-full cursor-pointer"
+                                    text="Update Media"
+                                    className="cursor-pointer"
                                 />
                             </div>
 
