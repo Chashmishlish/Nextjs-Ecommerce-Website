@@ -1,6 +1,6 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import axios from 'axios'
-import { MRT_ShowHideColumnsButton, MRT_ToggleDensePaddingButton, MRT_ToggleFullScreenButton, MRT_ToggleGlobalFilterButton, useMaterialReactTable } from 'material-react-table'
+import { MaterialReactTable, MRT_ShowHideColumnsButton, MRT_ToggleDensePaddingButton, MRT_ToggleFullScreenButton, MRT_ToggleGlobalFilterButton, useMaterialReactTable } from 'material-react-table'
 import React, { useState } from 'react'
 import { IconButton, Tooltip } from '@mui/material'
 import Link from 'next/link'
@@ -13,9 +13,9 @@ import ButtonLoading from '../ButtonLoading'
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import { showToast } from '@/lib/showToast'
 import { download, generateCsv, mkConfig } from 'export-to-csv'
-// tanstack querykey leta hai
+
 const Datatable = ({
-    queryKey,
+    queryKey,                    // tanstack querykey leta hai
     fetchUrl,
     columnsConfig,
     initialPageSize = 10,
@@ -23,7 +23,7 @@ const Datatable = ({
     deleteEndpoint,
     deleteType,
     trashView,
-    createAction
+    createAction                 // for action button on every row ...
 }) => {
 
     // filter , sorting and pagination states
@@ -44,7 +44,7 @@ const Datatable = ({
 
     // handle selete method
     const deleteMutation = useDeleteMutation(queryKey, deleteEndpoint)
-    
+
     // delete method
     const handleDelete = (ids, deleteType) => {
         let c
@@ -67,21 +67,22 @@ const Datatable = ({
         setExportLoading(true)
         try {
             const csvConfig = mkConfig({
-                fieldSeparator: ',' ,
-                decimalSeparator: ',' ,
-                useKeyAsHeaders: true ,
+                fieldSeparator: ',',
+                decimalSeparator: ',',
+                useKeyAsHeaders: true,
                 filename: 'csv-data'
             })
 
-            let csv 
-            if(Object.keys(rowSelection).length > 0){
+            let csv
+
+            if (Object.keys(rowSelection).length > 0) {
                 // export only seleted rows
                 const rowData = selectedRows.map((row) => row.original)
                 csv = generateCsv(csvConfig)(rowData)
-            }else {
+            } else {
                 //export all data
                 const { data: response } = await axios.get(exportEndpoint)
-                if(!response.success){
+                if (!response.success) {
                     throw new Error(response.message)
                 }
                 const rowData = response.data
@@ -93,7 +94,7 @@ const Datatable = ({
         } catch (error) {
             console.log(error);
             showToast('error', error.message)
-        }finally{
+        } finally {
             setExportLoading(false)
         }
     }
@@ -106,8 +107,10 @@ const Datatable = ({
         isLoading
     } = useQuery({
         queryKey: [queryKey, { columnFilters, globalFilters, pagination, sorting }],
+        
         queryFn: async () => {
             const url = new URL(fetchUrl, process.env.NEXT_PUBLIC_BASE_URL)
+            
             //read our state and pass it to the API as query params
             url.searchParams.set(
                 'start',
@@ -224,24 +227,24 @@ const Datatable = ({
         enableRowActions: true,
         positionActionsColumn: 'last',
         renderRowActionMenuItems: ({ row }) => createAction(row, deleteType, handleDelete),
-    
-        renderTopToolbarCustomActions: ({table}) => {
+
+        renderTopToolbarCustomActions: ({ table }) => {
             <Tooltip>
                 <ButtonLoading
                     type="button"
-                    text={<><SaveAltIcon/> Export </>}
+                    text={<><SaveAltIcon /> Export </>}
                     loading={exportLoading}
-                    onClick={ () => handleExport(table.getSelectedRowModel().rows)}
+                    onClick={() => handleExport(table.getSelectedRowModel().rows)}
                 />
             </Tooltip>
         }
     });
 
-    return
-    <div>
-        Datatable
-    </div>
+    return (
+        <MaterialReactTable table={table} />
+    )
+    
 }
 
 export default Datatable
-    // export method : https://www.npmjs.com/package/export-to-csv
+// export method : https://www.npmjs.com/package/export-to-csv
