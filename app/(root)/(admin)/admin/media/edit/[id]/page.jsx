@@ -19,19 +19,9 @@ import imgPlaceholdern from '@/public/assests/images/img-placeholder.webp'
 import axios from 'axios';
 
 const breadCrumbData = [
-    {
-        href: ADMIN_DASHBOARD,
-        label: 'Home'
-    },
-    {
-        href: ADMIN_MEDIA_SHOW,
-        label: 'Media'
-    },
-    {
-        href: "",
-        label: 'Edit Media'
-    },
-
+    {href: ADMIN_DASHBOARD, label: 'Home'},
+    {href: ADMIN_MEDIA_SHOW, label: 'Media'},
+    { href: "",label: 'Edit Media' },
 ];
 
 const EditMedia = ({ params }) => {
