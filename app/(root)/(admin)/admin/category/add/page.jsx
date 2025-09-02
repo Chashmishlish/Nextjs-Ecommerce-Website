@@ -131,3 +131,5 @@ const AddCategory = () => {
 
 export default AddCategory
 //https://www.npmjs.com/package/slugify terminal: npm i slugify
+//npm i material-react-table @mui/material @mui/x-date-pickers @mui/icons-material @emotion/react @emotion/styled
+//https://www.material-react-table.com/
