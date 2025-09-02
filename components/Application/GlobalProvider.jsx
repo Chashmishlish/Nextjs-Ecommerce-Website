@@ -20,7 +20,7 @@ const GlobalProvider = ({ children }) => {
       </Provider>
       <Suspense fallback={null}>
         <ReactQueryDevtools initialIsOpen={false}/> 
-        // keeping it false so that by default it shows icon not the content inside it
+        {/* // keeping it false so that by default it shows icon not the content inside it */}
       </Suspense>
     </QueryClientProvider>
 
