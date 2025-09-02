@@ -66,6 +66,7 @@ const MediaPage = () => {
     //   console.log(data);
 
     const deleteMutation = useDeleteMutation('media-data', '/api/media/delete')
+    
     const handleDelete = (ids, deleteType) => {
         let c = true
         if (deleteType === 'PD') {
