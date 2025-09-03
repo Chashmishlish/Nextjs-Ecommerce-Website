@@ -20,7 +20,6 @@ const productSchema = new mongoose.Schema({
     },
     mrp:{
         type: Number,
-        required: true,
     },
     sellingPrice:{
         type: Number,
@@ -28,7 +27,6 @@ const productSchema = new mongoose.Schema({
     },
     discountPercentage:{
         type: Number,
-        required: true,
     },
     media:[
         {
@@ -39,6 +37,7 @@ const productSchema = new mongoose.Schema({
     ],
     description:{
         type: String,
+        required: true
     },
     deletedAt:{
         type: Date,
