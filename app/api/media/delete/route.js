@@ -1,8 +1,10 @@
 import cloudinary from "@/lib/cloudinary";
 import { connectDB } from "@/lib/databaseConnection";
-import { catchError, isAuthenticated, response } from "@/lib/helperFunction";
+import { catchError, response } from "@/lib/helperFunction";
 import MediaModel from "@/models/Media.model";
 import mongoose from "mongoose";
+import { isAuthenticated } from "@/lib/authentication"
+
 
 // This is an API route handler that performs either a soft delete (SD) 
 // or a restore (RSD) operation on media items.

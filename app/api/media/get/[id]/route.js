@@ -1,7 +1,9 @@
 import { connectDB } from "@/lib/databaseConnection"
-import { catchError, isAuthenticated, response } from "@/lib/helperFunction"
+import { catchError, response } from "@/lib/helperFunction"
 import MediaModel from "@/models/Media.model"
 import { isValidObjectId } from "mongoose"
+import { isAuthenticated } from "@/lib/authentication"
+
 // import { PathParamsContext } from "next/dist/shared/lib/hooks-client-context.shared-runtime"
 
 export async function GET(request, {params}){
