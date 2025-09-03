@@ -77,6 +77,7 @@ export async function GET(request) {
         const totalRowCount = await CategoryModel.countDocuments(matchQuery)
 
         return NextResponse.json({
+            success: true,  // product>add>page.jsx => if(getCategory && getCategory.success){...
             data: getCategory,
             meta: {totalRowCount }
         })
