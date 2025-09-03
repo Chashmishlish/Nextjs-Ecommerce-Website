@@ -71,7 +71,7 @@ const Datatable = ({
       const csvConfig = mkConfig({
         fieldSeparator: ',',
         decimalSeparator: ',',
-        useKeyAsHeaders: true,
+        useKeysAsHeaders: true,
         filename: 'csv-data'
       })
 
