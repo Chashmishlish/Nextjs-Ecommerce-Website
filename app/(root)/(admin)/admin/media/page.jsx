@@ -17,7 +17,7 @@ import ButtonLoading from '@/components/Application/ButtonLoading'
 
 const breadcrumbData = [
     { href: ADMIN_DASHBOARD, label: 'Home' },
-    { href: '', label: 'Media' },
+    { href: "" , label: 'Media' },
 ]
 
 const MediaPage = () => {

@@ -21,7 +21,7 @@ import axios from 'axios';
 const breadCrumbData = [
     {href: ADMIN_DASHBOARD, label: 'Home'},
     {href: ADMIN_MEDIA_SHOW, label: 'Media'},
-    { href: "",label: 'Edit Media' },
+    { href: ADMIN_MEDIA_EDIT, label: 'Edit Media' },
 ];
 
 const EditMedia = ({ params }) => {
