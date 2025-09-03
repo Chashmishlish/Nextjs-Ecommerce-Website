@@ -125,6 +125,7 @@ const Datatable = ({
     columns: columnsConfig,
     data,
     enableRowSelection: true,
+    // getRowId: (row) => row._id,  
     columnFilterDisplayMode: 'popover',
     paginationDisplayMode: 'pages',
     enableColumnOrdering: true,
@@ -143,7 +144,7 @@ const Datatable = ({
     onGlobalFilterChange: setGlobalFilter,
     onPaginationChange: setPagination,
     onSortingChange: setSorting,
-    rowCount: data?.meta?.totalRowCount ?? 0,
+    rowCount: meta?.totalRowCount ?? 0,
     onRowSelectionChange: setRowSelection,
     state: {
       columnFilters,
@@ -156,9 +157,9 @@ const Datatable = ({
       rowSelection
     },
 
-    getRowId: (originalRow) => originalRow._id,
+    getRowId: (originalRow) => originalRow.id,
 
-    // ✅ fixed: return statement added
+    // fixed: return statement added
     renderToolbarInternalActions: ({ table }) => (
       <>
         {/* built-in buttons */}
@@ -218,7 +219,7 @@ const Datatable = ({
     positionActionsColumn: 'last',
     renderRowActionMenuItems: ({ row }) => createAction(row, deleteType, handleDelete),
 
-    // ✅ fixed: added return
+    //  fixed: added return
     renderTopToolbarCustomActions: ({ table }) => (
       <Tooltip title="Export Data">
         <span>
@@ -226,11 +227,12 @@ const Datatable = ({
             type="button"
             text={
               <>
-                <SaveAltIcon /> Export
+                <SaveAltIcon fontSize='25' /> Export
               </>
             }
             loading={exportLoading}
             onClick={() => handleExport(table.getSelectedRowModel().rows)}
+            className='cursor-pointer'
           />
         </span>
       </Tooltip>
