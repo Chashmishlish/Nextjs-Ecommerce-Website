@@ -15,6 +15,8 @@ import slugify from 'slugify';
 import { showToast } from '@/lib/showToast';
 import axios from 'axios';
 import useFetch from '@/hooks/useFetch';
+import Select from '@/components/Application/Select';
+import Editor from '@/components/Application/Admin/Editor';
 const breadcrumbData = [
     { href: ADMIN_DASHBOARD, label: 'Home' },
     { href: ADMIN_PRODUCT_SHOW, label: 'Products' },
@@ -23,13 +25,24 @@ const breadcrumbData = [
 
 const AddProduct = () => {
     const [loading, setLoading] = useState(false);
-    const {data: getCategory} = useFetch('/api/category?deleteType=SD&&size=100000')
+    const [categoryOption, setCategoryOption] = useState([]);
+    const { data: getCategory } = useFetch('/api/category?deleteType=SD&&size=100000')
     // console.log(getCategory)
+
+    useEffect(() => {
+        if (getCategory && getCategory.success) {
+            const data = getCategory.data
+            const options = data.map((cat) => ({ label: cat.name, value: cat._id }))
+            // console.log(options)
+            setCategoryOption(options)
+        }
+    }, [getCategory])
 
     const formSchema = zSchema.pick({
         name: true,
         slug: true,
         category: true,
+        subCategory: true,  // Optional hi rahega
         mrp: true,
         sellingPrice: true,
         discountPercentage: true,
@@ -43,6 +56,7 @@ const AddProduct = () => {
             name: "",
             slug: "",
             category: "",
+            subCategory: "",
             mrp: "",
             sellingPrice: "",
             discountPercentage: "",
@@ -59,6 +73,11 @@ const AddProduct = () => {
             // form.setValue('slug', slugify(name).toLowerCase())
         }
     }, [form.watch('name')])
+
+    const editor = (event, editor) => {
+        const data = editor.getData()
+        form.setValue('description', data)
+    }
 
     const onSubmit = async (values) => {
         setLoading(true)
@@ -87,193 +106,191 @@ const AddProduct = () => {
                 <CardContent className='pb-5'>
 
                     <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="grid md:grid-cols-2 gap-5">
+                        <form onSubmit={form.handleSubmit(onSubmit)} >
+                            <div className="grid md:grid-cols-2 gap-5" >
+                                {/* Name */}
+                                <div className="">
+                                    <FormField
+                                        control={form.control}
+                                        name="name"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    Name <span className="text-red-500">*</span>
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        type="text"
+                                                        placeholder="Enter product name"
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                                {/* Slug */}
+                                <div className="">
+                                    <FormField
+                                        control={form.control}
+                                        name="slug"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    Slug <span className="text-red-500">*</span>
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        type="text"
+                                                        placeholder="Enter slug e.g. mobile-phones"
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                                {/* Category */}
+                                <div className="">
+                                    <FormField
+                                        control={form.control}
+                                        name="category"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    Category <span className="text-red-500">*</span>
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Select
+                                                        options={categoryOption}
+                                                        selected={field.value}
+                                                        setSelected={field.onChange}
+                                                        isMulti={false}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                                {/* Sub Category */}
+                                <div className="">
+                                    <FormField
+                                        control={form.control}
+                                        name="subCategory"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Sub Category</FormLabel>
+                                                <FormControl>
+                                                    <Input type="text" placeholder="Enter product sub-category" {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                                {/* MRP */}
+                                <div className="">
+                                    <FormField
+                                        control={form.control}
+                                        name="mrp"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    MRP
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        type="number"
+                                                        placeholder="Enter Maximum Retail Price"
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                                {/* Selling Price */}
+                                <div className="">
+                                    <FormField
+                                        control={form.control}
+                                        name="sellingPrice"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    Selling Price <span className="text-red-500">*</span>
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        type="number"
+                                                        placeholder="Enter selling price"
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                                {/* Discount Percentage */}
+                                <div className="">
+                                    <FormField
+                                        control={form.control}
+                                        name="discountPercentage"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Discount Percentage (%)</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        type="number"
+                                                        placeholder="Enter discount percentage"
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                                {/* Description */}
+                                <div className="mb-5 md:col-span-2">
+                                    <FormLabel className="mb-2">Description
+                                        <span className="text-red-500">*</span>
+                                    </FormLabel>
+                                    <Editor onChange={editor} />
+                                    <FormMessage> </FormMessage>
+                                </div>
 
-                            {/* Name */}
-<div className="mb-5">
-  <FormField
-    control={form.control}
-    name="name"
-    render={({ field }) => (
-      <FormItem>
-        <FormLabel>
-          Name <span className="text-red-500">*</span>
-        </FormLabel>
-        <FormControl>
-          <Input
-            type="text"
-            placeholder="Enter product name"
-            {...field}
-          />
-        </FormControl>
-        <FormMessage />
-      </FormItem>
-    )}
-  />
-</div>
+                                {/* Media
+                                <div className="">
+                                    <FormField
+                                        control={form.control}
+                                        name="media"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    Media <span className="text-red-500">*</span>
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        type="file"
+                                                        accept="image/*"
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div> */}
 
-{/* Slug */}
-<div className="mb-5">
-  <FormField
-    control={form.control}
-    name="slug"
-    render={({ field }) => (
-      <FormItem>
-        <FormLabel>
-          Slug <span className="text-red-500">*</span>
-        </FormLabel>
-        <FormControl>
-          <Input
-            type="text"
-            placeholder="Enter slug e.g. mobile-phones"
-            {...field}
-          />
-        </FormControl>
-        <FormMessage />
-      </FormItem>
-    )}
-  />
-</div>
-
-{/* Category */}
-<div className="mb-5">
-  <FormField
-    control={form.control}
-    name="category"
-    render={({ field }) => (
-      <FormItem>
-        <FormLabel>
-          Category <span className="text-red-500">*</span>
-        </FormLabel>
-        <FormControl>
-          <Input
-            type="text"
-            placeholder="Enter product category"
-            {...field}
-          />
-        </FormControl>
-        <FormMessage />
-      </FormItem>
-    )}
-  />
-</div>
-
-{/* MRP */}
-<div className="mb-5">
-  <FormField
-    control={form.control}
-    name="mrp"
-    render={({ field }) => (
-      <FormItem>
-        <FormLabel>
-          MRP 
-        </FormLabel>
-        <FormControl>
-          <Input
-            type="number"
-            placeholder="Enter Maximum Retail Price"
-            {...field}
-          />
-        </FormControl>
-        <FormMessage />
-      </FormItem>
-    )}
-  />
-</div>
-
-{/* Selling Price */}
-<div className="mb-5">
-  <FormField
-    control={form.control}
-    name="sellingPrice"
-    render={({ field }) => (
-      <FormItem>
-        <FormLabel>
-          Selling Price <span className="text-red-500">*</span>
-        </FormLabel>
-        <FormControl>
-          <Input
-            type="number"
-            placeholder="Enter selling price"
-            {...field}
-          />
-        </FormControl>
-        <FormMessage />
-      </FormItem>
-    )}
-  />
-</div>
-
-{/* Discount Percentage */}
-<div className="mb-5">
-  <FormField
-    control={form.control}
-    name="discountPercentage"
-    render={({ field }) => (
-      <FormItem>
-        <FormLabel>Discount Percentage (%)</FormLabel>
-        <FormControl>
-          <Input
-            type="number"
-            placeholder="Enter discount percentage"
-            {...field}
-          />
-        </FormControl>
-        <FormMessage />
-      </FormItem>
-    )}
-  />
-</div>
-
-{/* Media */}
-<div className="mb-5">
-  <FormField
-    control={form.control}
-    name="media"
-    render={({ field }) => (
-      <FormItem>
-        <FormLabel>
-          Media <span className="text-red-500">*</span>
-        </FormLabel>
-        <FormControl>
-          <Input
-            type="file"
-            accept="image/*"
-            {...field}
-          />
-        </FormControl>
-        <FormMessage />
-      </FormItem>
-    )}
-  />
-</div>
-
-{/* Description */}
-<div className="mb-5">
-  <FormField
-    control={form.control}
-    name="description"
-    render={({ field }) => (
-      <FormItem>
-        <FormLabel>
-            Description <span className="text-red-500">*</span>
-            </FormLabel>
-        <FormControl>
-          <textarea
-            placeholder="Enter product description"
-            className="w-full border rounded-md p-2"
-            {...field}
-          />
-        </FormControl>
-        <FormMessage />
-      </FormItem>
-    )}
-  />
-</div>
-
+                            </div>
 
                             {/* button */}
-                            <div className="mb-3">
+                            <div className="mt-6">
                                 <ButtonLoading
                                     loading={loading}
                                     type="submit"
