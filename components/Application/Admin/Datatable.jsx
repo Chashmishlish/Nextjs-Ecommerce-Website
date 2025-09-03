@@ -157,7 +157,7 @@ const Datatable = ({
       rowSelection
     },
 
-    getRowId: (originalRow) => originalRow.id,
+    getRowId: (originalRow) => originalRow._id,
 
     // fixed: return statement added
     renderToolbarInternalActions: ({ table }) => (

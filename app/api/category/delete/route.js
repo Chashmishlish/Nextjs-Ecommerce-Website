@@ -1,9 +1,8 @@
-import cloudinary from "@/lib/cloudinary";
 import { connectDB } from "@/lib/databaseConnection";
 import { catchError, response } from "@/lib/helperFunction";
-import MediaModel from "@/models/Media.model";
 import mongoose from "mongoose";
 import { isAuthenticated } from "@/lib/authentication"
+import CategoryModel from "@/models/Category.model";
 
 
 // This is an API route handler that performs either a soft delete (SD) 
@@ -25,8 +24,8 @@ export async function PUT(request) {
             return response(false, 400, 'Invalid or empty ID list.')
         }
 
-        const media = await MediaModel.find({ _id: { $in: ids } }).lean()
-        if (!media.length) {
+        const category = await CategoryModel.find({ _id: { $in: ids } }).lean()
+        if (!category.length) {
             return response(false, 404, 'Data not found.')
         }
 
@@ -35,9 +34,9 @@ export async function PUT(request) {
         }
 
         if (deleteType === 'SD') {
-            await MediaModel.updateMany({ _id: { $in: ids } }, { $set: { deletedAt: new Date().toISOString() } });
+            await CategoryModel.updateMany({ _id: { $in: ids } }, { $set: { deletedAt: new Date().toISOString() } });
         } else {
-            await MediaModel.updateMany({ _id: { $in: ids } }, { $set: { deletedAt: null } });
+            await CategoryModel.updateMany({ _id: { $in: ids } }, { $set: { deletedAt: null } });
         }
 
         return response(true, 200, deleteType === 'SD' ? ' Data moved into trash.' : "Data Restored");
@@ -48,9 +47,6 @@ export async function PUT(request) {
 }
 
 export async function DELETE(request) {
-
-    const session = await mongoose.startSession()
-    session.startTransaction()
 
     try {
         const auth = await isAuthenticated('admin')
@@ -68,8 +64,8 @@ export async function DELETE(request) {
             return response(false, 400, 'Invalid or empty ID list.')
         }
 
-        const media = await MediaModel.find({ _id: { $in: ids } }).session(session).lean()
-        if (!media.length) {
+        const category = await CategoryModel.find({ _id: { $in: ids } }).lean()
+        if (!category.length) {
             return response(false, 404, 'Data not found.')
         }
 
@@ -77,26 +73,10 @@ export async function DELETE(request) {
             return response(false, 400, 'Invalid delete operation. Delete type should be PD for this route. ')
         }
 
-        await MediaModel.deleteMany({ _id: { $in: ids } }).session(session)
+        await CategoryModel.deleteMany({ _id: { $in: ids } })
 
-        // delete all media from cloudinary.
-        const publicIds = media.map(m => m.public_id)
-
-        try {
-            await cloudinary.api.delete_resources(publicIds)
-        } catch (error) {
-            // session revert (vid: 2:34:30 , pt:2)
-            await session.abortTransaction()
-            session.endSession()
-        }
-
-        await session.commitTransaction()
-        session.endSession()
-
-        return response(true, 200, "Data has been deleted permanently")
+        return response(true, 200, "Data deleted permanently")
     } catch (error) {
-        await session.abortTransaction()
-        session.endSession()
         return catchError(error)
     }
 }

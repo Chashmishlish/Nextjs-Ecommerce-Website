@@ -1,7 +1,8 @@
 'use client'
 import BreadCrumb from '@/components/Application/Admin/BreadCrumb';
 import DatatableWrapper from '@/components/Application/Admin/DatatableWrapper';
-// import DeleteAction, EditAction from '@/components/Application/Admin/DeleteAction';
+import DeleteAction from '@/components/Application/Admin/DeleteAction';
+import EditAction from '@/components/Application/Admin/EditAction';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { DT_CATEGORY_COLUMN } from '@/lib/column';
@@ -47,7 +48,7 @@ const showCategory = () => {
         <CardContent className=' px-0 pt-0'>
           <DatatableWrapper
             queryKey="category-data"
-            fetchUrl="/api/categories"
+            fetchUrl="/api/category"
             initialPageSize={10}
             columnsConfig={columns}
             exportEndpoint="/api/category/export"
