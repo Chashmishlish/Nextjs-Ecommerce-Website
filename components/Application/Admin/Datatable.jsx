@@ -221,13 +221,15 @@ const Datatable = ({
         {/* delete all */}
         {deleteType === 'SD' && (
           <Tooltip title="Delete All">
-            <IconButton
-              disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
-              onClick={() => handleDelete(Object.keys(rowSelection), deleteType)}
-            >
-              <DeleteIcon />
-            </IconButton>
-          </Tooltip>
+  <span>
+    <IconButton
+      disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
+      onClick={() => handleDelete(Object.keys(rowSelection), deleteType)}
+    >
+      <DeleteIcon />
+    </IconButton>
+  </span>
+</Tooltip>
         )}
 
         {/* restore + permanent delete */}
