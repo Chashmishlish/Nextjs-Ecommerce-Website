@@ -18,7 +18,6 @@ import Select from '@/components/Application/Select';
 import Editor from '@/components/Application/Admin/Editor';
 import MediaModel from '@/components/Application/Admin/MediaModel';
 import Image from 'next/image';
-import { FormProvider } from "react-hook-form";
 
 const breadcrumbData = [
   { href: ADMIN_DASHBOARD, label: 'Home' },
@@ -88,18 +87,29 @@ const AddProduct = () => {
     const data = editor.getData();
     form.setValue('description', data);
   };
+
+
 const onSubmit = async (values) => {
-  console.log("🔥 onSubmit fired with data:", values);
+
+//  // ✅ Normalize values
+//   const normalizedValues = {
+//     ...values,
+//     subCategory: values.subCategory || null, // optional
+//     mrp: values.mrp ? Number(values.mrp) : undefined,
+//     discountPercentage: values.discountPercentage ? Number(values.discountPercentage) : undefined,
+//     sellingPrice: Number(values.sellingPrice) // required field
+//   };
+
+//   console.log("🔥 onSubmit fired with data:", normalizedValues);
+  
   setLoading(true);
   try {
     if (selectedMedia.length <= 0) {
       return showToast('error', 'Please select media.');
     }
 
-    // ✅ SubCategory ko optional bana diya
-      values.subCategory = values.subCategory || null;
-
     const mediaIds = selectedMedia.map(media => media._id)
+    values.subCategory = values.subCategory || null; // optional fix
     values.media = mediaIds
 
     const { data: response } = await axios.post('/api/product/create', values);
