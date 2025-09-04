@@ -89,6 +89,13 @@ const AddProduct = () => {
     const onSubmit = async (values) => {
         setLoading(true)
         try {
+            if(selectedMedia.length <= 0){
+                return showToast('error', 'Please select media.')
+            } 
+
+            const mediaIds = selectedMedia.map(media => media._id)
+            values.media = mediaIds
+
             const { data: response } = await axios.post('/api/product/create', values)
             if (!response.success) {
                 throw new Error(response.message)
