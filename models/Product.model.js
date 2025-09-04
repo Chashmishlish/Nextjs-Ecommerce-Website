@@ -19,8 +19,9 @@ const productSchema = new mongoose.Schema({
         required: true
     },
     subCategory:{
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref: 'subCategory',
+        required: false,
     },
     mrp:{
         type: Number,
