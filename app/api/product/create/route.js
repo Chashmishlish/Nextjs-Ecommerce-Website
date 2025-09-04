@@ -32,6 +32,7 @@ export async function POST(request) {
     }
 
     const productData = validate.data
+
     const newProduct = new ProductModel({ 
       name: productData.name,
       slug: productData.slug,
