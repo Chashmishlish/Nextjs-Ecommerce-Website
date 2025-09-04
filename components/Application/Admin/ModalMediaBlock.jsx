@@ -5,7 +5,26 @@ import Image from 'next/image'
 
 const ModalMediaBlock = ({media , selectedMedia , setSelectedMedia, isMultiple}) => {
    const handleCheck = () => {
+    let newSelectedMedia = []
+    const isSelected = selectedMedia.find(m=> m._id === media._id) ? true : false
+    if(isMultiple){
+        //select multiple media
+        if(isSelected){
+            // remove selected media from array
+            newSelectedMedia = selectedMedia.filter(m=> m._id !== media._id)
+        }else {
+            // add new media into array 
+            newSelectedMedia = [...selectedMedia, {
+                _id: media._id,
+                url: media.secure_url
+            }]
+        }
+             setSelectedMedia(newSelectedMedia)
 
+    } else {
+        // select single media
+
+    }
    }
     return (
     <label htmlFor = {media._id} className='border border-gray-200 dark:border-gray-800 relative group rounded overflow-hidden'>

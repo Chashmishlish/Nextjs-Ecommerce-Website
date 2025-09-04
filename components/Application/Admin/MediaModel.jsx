@@ -30,11 +30,13 @@ const MediaModel = ({ open, setOpen, selectedMedia, setSelectedMedia, isMultiple
   }
 
   const handleClose = () => {
+    // setSelectedMedia()
+    setOpen(false)
 
   }
 
   const handleSelect = () => {
-
+    
   }
 
   return (
