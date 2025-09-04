@@ -2,9 +2,8 @@
 
 import BreadCrumb from '@/components/Application/Admin/BreadCrumb';
 import { ADMIN_DASHBOARD, ADMIN_PRODUCT_SHOW } from '@/routes/AdminPanelRoutes';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useForm } from "react-hook-form";
 import ButtonLoading from "@/components/Application/ButtonLoading";
 import { zSchema } from '@/lib/zodSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -18,314 +17,240 @@ import Select from '@/components/Application/Select';
 import Editor from '@/components/Application/Admin/Editor';
 import MediaModel from '@/components/Application/Admin/MediaModel';
 import Image from 'next/image';
+import { useForm, FormProvider } from "react-hook-form";
 
 const breadcrumbData = [
-    { href: ADMIN_DASHBOARD, label: 'Home' },
-    { href: ADMIN_PRODUCT_SHOW, label: 'Products' },
-    { href: "", label: 'Add Product' },
+  { href: ADMIN_DASHBOARD, label: 'Home' },
+  { href: ADMIN_PRODUCT_SHOW, label: 'Products' },
+  { href: "", label: 'Add Product' },
 ];
 
 const AddProduct = () => {
-    const [loading, setLoading] = useState(false);
-    const [categoryOption, setCategoryOption] = useState([]);
-    const { data: getCategory } = useFetch('/api/category?deleteType=SD&&size=100000');
+  const [loading, setLoading] = useState(false);
+  const [categoryOption, setCategoryOption] = useState([]);
+  const { data: getCategory } = useFetch('/api/category?deleteType=SD&&size=100000');
 
-    // Media modal states
-    const [open, setOpen] = useState(false)
-    const [selectedMedia, setSelectedMedia] = useState([])
+  const [open, setOpen] = useState(false);
+  const [selectedMedia, setSelectedMedia] = useState([]);
 
-    // Set category options
-    useEffect(() => {
-        if (getCategory && getCategory.success) {
-            const data = getCategory.data
-            const options = data.map((cat) => ({ label: cat.name, value: cat._id }))
-            setCategoryOption(options)
-        }
-    }, [getCategory])
+  const formSchema = zSchema.pick({
+    name: true,
+    slug: true,
+    category: true,
+    subCategory: true,
+    mrp: true,
+    sellingPrice: true,
+    discountPercentage: true,
+    media: true,
+    description: true,
+  });
 
-    const formSchema = zSchema.pick({
-        name: true,
-        slug: true,
-        category: true,
-        subCategory: true,
-        mrp: true,
-        sellingPrice: true,
-        discountPercentage: true,
-        media: true,
-        description: true,
-    });
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      slug: "",
+      category: "",
+      subCategory: "",
+      mrp: 0,
+      sellingPrice: 0,
+      discountPercentage: 0,
+      media: "",
+      description: "",
+    },
+  });
 
-    const form = useForm({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            name: "",
-            slug: "",
-            category: "",
-            subCategory: "",
-            mrp: 0,
-            sellingPrice: 0,
-            discountPercentage: 0,
-            media: "",
-            description: "",
-        },
-    });
-
-    const nameValue = form.watch('name');
-
-    // Auto-generate slug
-    useEffect(() => {
-        if (nameValue) {
-            form.setValue('slug', slugify(nameValue, { lower: true }));
-        }
-    }, [nameValue])
-
-    // Discount calculation
-    useEffect(() => {
-        const mrp = form.getValues('mrp') || 0
-        const sellingPrice = form.getValues('sellingPrice') || 0
-        if (mrp > 0 && sellingPrice > 0) {
-            const discountPercentage = ((mrp - sellingPrice) / mrp) * 100
-            form.setValue('discountPercentage', Math.round(discountPercentage))
-        }
-    }, [form.watch('mrp'), form.watch('sellingPrice')])
-
-    // Editor content
-    const editor = (event, editor) => {
-        const data = editor.getData()
-        form.setValue('description', data)
+  useEffect(() => {
+    if (getCategory && getCategory.success) {
+      const options = getCategory.data.map(cat => ({ label: cat.name, value: cat._id }));
+      setCategoryOption(options);
     }
+  }, [getCategory]);
 
-    // Submit function
-    const onSubmit = async (values) => {
-        setLoading(true)
-        try {
-            // Media validation
-            if (selectedMedia.length <= 0) {
-                return showToast('error', 'Please select media.')
-            }
+  // Auto-generate slug
+  const nameValue = form.watch('name');
+  useEffect(() => {
+    if (nameValue) form.setValue('slug', slugify(nameValue, { lower: true }));
+  }, [nameValue]);
 
-            const mediaIds = selectedMedia.map(media => media._id)
-            values.media = mediaIds
-
-            const { data: response } = await axios.post('/api/product/create', values)
-            if (!response.success) {
-                throw new Error(response.message)
-            }
-
-            form.reset()
-            setSelectedMedia([]) // clear selected media
-            showToast('success', response.message)
-        } catch (error) {
-            showToast('error', error.message)
-        } finally {
-            setLoading(false)
-        }
+  // Auto-calculate discount
+  useEffect(() => {
+    const mrp = form.getValues('mrp') || 0;
+    const sellingPrice = form.getValues('sellingPrice') || 0;
+    if (mrp > 0 && sellingPrice > 0) {
+      const discount = Math.round(((mrp - sellingPrice) / mrp) * 100);
+      form.setValue('discountPercentage', discount);
     }
+  }, [form.watch('mrp'), form.watch('sellingPrice')]);
 
-    return (
-        <div>
-            <BreadCrumb breadcrumbData={breadcrumbData} />
+  const editorChange = (event, editor) => {
+    const data = editor.getData();
+    form.setValue('description', data);
+  };
 
-            <Card className="py-0 rounded shadow-sm">
-                <CardHeader className="pt-3 px-3 border-b [.border-b]:pb-2">
-                    <h4 className='text-xl font-semibold'> Add Product </h4>
-                </CardHeader>
-                <CardContent className='pb-5'>
+  const onSubmit = async (values) => {
+    setLoading(true);
+    try {
+      if (selectedMedia.length === 0) {
+        return showToast('error', 'Please select media.');
+      }
 
-                    {/* ⚡ FIXED: Removed inner <form> tag and moved onSubmit to <Form> */}
-                    <Form {...form} onSubmit={form.handleSubmit(onSubmit)}>
-                        <div className="grid md:grid-cols-2 gap-5">
-                            {/* Name */}
-                            <FormField
-                                control={form.control}
-                                name="name"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>
-                                            Name <span className="text-red-500">*</span>
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input type="text" placeholder="Enter product name" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+      values.media = selectedMedia.map(m => m._id);
 
-                            {/* Slug */}
-                            <FormField
-                                control={form.control}
-                                name="slug"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>
-                                            Slug <span className="text-red-500">*</span>
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input type="text" placeholder="Enter slug e.g. mobile-phones" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+      const { data: response } = await axios.post('/api/product/create', values);
 
-                            {/* Category */}
-                            <FormField
-                                control={form.control}
-                                name="category"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>
-                                            Category <span className="text-red-500">*</span>
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Select
-                                                options={categoryOption}
-                                                selected={field.value}
-                                                setSelected={field.onChange}
-                                                isMulti={false}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+      if (!response.success) throw new Error(response.message);
 
-                            {/* Sub Category */}
-                            <FormField
-                                control={form.control}
-                                name="subCategory"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Sub Category</FormLabel>
-                                        <FormControl>
-                                            <Input type="text" placeholder="Enter product sub-category" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+      form.reset();
+      setSelectedMedia([]);
+      showToast('success', response.message);
 
-                            {/* MRP */}
-                            <FormField
-                                control={form.control}
-                                name="mrp"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>MRP</FormLabel>
-                                        <FormControl>
-                                            <Input type="number" placeholder="Enter Maximum Retail Price" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+    } catch (error) {
+      console.error(error);
+      showToast('error', error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-                            {/* Selling Price */}
-                            <FormField
-                                control={form.control}
-                                name="sellingPrice"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>
-                                            Selling Price <span className="text-red-500">*</span>
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input type="number" placeholder="Enter selling price" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+  return (
+    <div>
+      <BreadCrumb breadcrumbData={breadcrumbData} />
+      <Card className="py-0 rounded shadow-sm">
+        <CardHeader className="pt-3 px-3 border-b [.border-b]:pb-2">
+          <h4 className='text-xl font-semibold'>Add Product</h4>
+        </CardHeader>
+        <CardContent className='pb-5'>
+          <FormProvider {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+              <div className="grid md:grid-cols-2 gap-5">
+                {/* Name */}
+                <FormField control={form.control} name="name" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor="name">Name <span className="text-red-500">*</span></FormLabel>
+                    <FormControl><Input id="name" placeholder="Enter product name" {...field} /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
 
-                            {/* Discount Percentage */}
-                            <FormField
-                                control={form.control}
-                                name="discountPercentage"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Discount Percentage (%)</FormLabel>
-                                        <FormControl>
-                                            <Input type="number" readOnly placeholder="Discount" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                {/* Slug */}
+                <FormField control={form.control} name="slug" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor="slug">Slug <span className="text-red-500">*</span></FormLabel>
+                    <FormControl><Input id="slug" placeholder="Enter slug e.g. mobile-phones" {...field} /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
 
-                            {/* Description */}
-                            <div className="mb-5 md:col-span-2">
-                                <FormLabel className="mb-2">
-                                    Description <span className="text-red-500">*</span>
-                                </FormLabel>
-                                <Editor onChange={editor} initialData={form.getValues('description')} />
-                                <FormMessage />
-                            </div>
+                {/* Category */}
+                <FormField control={form.control} name="category" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor="category">Category <span className="text-red-500">*</span></FormLabel>
+                    <FormControl>
+                      <Select
+                        id="category"
+                        options={categoryOption}
+                        selected={field.value}
+                        setSelected={field.onChange}
+                        isMulti={false}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
 
-                            {/* Media */}
-                            <div className="md:col-span-2 border border-dashed rounded p-5 text-center">
-                                <MediaModel
-                                    open={open}
-                                    setOpen={setOpen}
-                                    selectedMedia={selectedMedia}
-                                    setSelectedMedia={setSelectedMedia}
-                                    isMultiple={true}
-                                />
+                {/* SubCategory */}
+                <FormField control={form.control} name="subCategory" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor="subCategory">Sub Category</FormLabel>
+                    <FormControl><Input id="subCategory" placeholder="Enter product sub-category" {...field} /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
 
-                                {selectedMedia.length > 0 &&
-                                    <div className='flex justify-center items-center flex-wrap mb-3 gap-2'>
-                                        {selectedMedia.map(media => (
-                                            <div key={media._id} className='h-24 w-24 border'>
-                                                <Image
-                                                    src={media.url}
-                                                    height={100}
-                                                    width={100}
-                                                    alt=''
-                                                    className='size-full object-cover'
-                                                />
-                                            </div>
-                                        ))}
-                                    </div>
-                                }
+                {/* MRP */}
+                <FormField control={form.control} name="mrp" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor="mrp">MRP</FormLabel>
+                    <FormControl><Input id="mrp" type="number" placeholder="Enter Maximum Retail Price" {...field} /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
 
-                                <div onClick={() => setOpen(true)} className='bg-gray-50 dark:bg-card border w-[200px] mx-auto p-5 cursor-pointer'>
-                                    <span className='font-semibold'> Select Media </span>
-                                </div>
-                            </div>
+                {/* Selling Price */}
+                <FormField control={form.control} name="sellingPrice" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor="sellingPrice">Selling Price <span className="text-red-500">*</span></FormLabel>
+                    <FormControl><Input id="sellingPrice" type="number" placeholder="Enter selling price" {...field} /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+
+                {/* Discount */}
+                <FormField control={form.control} name="discountPercentage" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor="discountPercentage">Discount (%)</FormLabel>
+                    <FormControl><Input id="discountPercentage" type="number" readOnly {...field} /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+
+                {/* Description */}
+                <div className="md:col-span-2 mb-5">
+                  <FormLabel>Description <span className="text-red-500">*</span></FormLabel>
+                  <Editor onChange={editorChange} initialData={form.getValues('description')} />
+                  <FormMessage />
+                </div>
+
+                {/* Media */}
+                <div className="md:col-span-2 border border-dashed rounded p-5 text-center">
+                  <MediaModel open={open} setOpen={setOpen} selectedMedia={selectedMedia} setSelectedMedia={setSelectedMedia} isMultiple={true} />
+                  {selectedMedia.length > 0 &&
+                    <div className='flex justify-center items-center flex-wrap mb-3 gap-2'>
+                      {selectedMedia.map(media => (
+                        <div key={media._id} className='h-24 w-24 border'>
+                          <Image src={media.url} height={100} width={100} alt='' className='object-cover' />
                         </div>
+                      ))}
+                    </div>
+                  }
+                  <div onClick={() => setOpen(true)} className='bg-gray-50 dark:bg-card border w-[200px] mx-auto p-5 cursor-pointer'>
+                    <span className='font-semibold'>Select Media</span>
+                  </div>
+                </div>
+              </div>
 
-                        {/* ⚡ Submit button */}
-                        <div className="mt-6">
-                            <ButtonLoading
-                                loading={loading}
-                                type="submit"
-                                text="Add Product"
-                                className="cursor-pointer"
-                            />
-                        </div>
-                    </Form>
-                </CardContent>
-            </Card>
-        </div>
-    )
-}
+              {/* Submit button */}
+              <div className="mt-6">
+    <ButtonLoading
+        loading={loading}
+        type="submit"
+        text="Add Product"
+        className="cursor-pointer"
+    />
+</div>
+            </form>
+          </FormProvider>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
 
-export default AddProduct
+export default AddProduct;
 
 
 // "use client";
-
 // import BreadCrumb from '@/components/Application/Admin/BreadCrumb';
 // import { ADMIN_DASHBOARD, ADMIN_PRODUCT_SHOW } from '@/routes/AdminPanelRoutes';
 // import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from "@/components/ui/form";
 // import { Input } from "@/components/ui/input";
-// import { useForm } from "react-hook-form";
+// import { FormProvider, useForm } from "react-hook-form";
 // import ButtonLoading from "@/components/Application/ButtonLoading";
 // import { zSchema } from '@/lib/zodSchema';
 // import { zodResolver } from '@hookform/resolvers/zod';
 // import { Card, CardContent, CardHeader } from '@/components/ui/card';
-// import { useState } from 'react';
-// import { useEffect } from "react";
+// import { useState, useEffect } from 'react';
 // import slugify from 'slugify';
 // import { showToast } from '@/lib/showToast';
 // import axios from 'axios';
@@ -338,16 +263,14 @@ export default AddProduct
 // const breadcrumbData = [
 //     { href: ADMIN_DASHBOARD, label: 'Home' },
 //     { href: ADMIN_PRODUCT_SHOW, label: 'Products' },
-//     { href: "", label: 'Add Product' },
+//     { href: "", Label: 'Add Product' },
 // ];
 
 // const AddProduct = () => {
 //     const [loading, setLoading] = useState(false);
 //     const [categoryOption, setCategoryOption] = useState([]);
 //     const { data: getCategory } = useFetch('/api/category?deleteType=SD&&size=100000')
-//     // console.log(getCategory)
 
-//     // media model states
 //     const [open, setOpen] = useState(false)
 //     const [selectedMedia, setSelectedMedia] = useState([])
 
@@ -355,7 +278,6 @@ export default AddProduct
 //         if (getCategory && getCategory.success) {
 //             const data = getCategory.data
 //             const options = data.map((cat) => ({ label: cat.name, value: cat._id }))
-//             // console.log(options)
 //             setCategoryOption(options)
 //         }
 //     }, [getCategory])
@@ -364,7 +286,7 @@ export default AddProduct
 //         name: true,
 //         slug: true,
 //         category: true,
-//         subCategory: true,  // Optional hi rahega
+//         subCategory: true,
 //         mrp: true,
 //         sellingPrice: true,
 //         discountPercentage: true,
@@ -387,34 +309,31 @@ export default AddProduct
 //         },
 //     });
 
-//     // console.log(form);
-//     const nameValue = form.watch('name'); // watch name to auto-update slug
+//     const nameValue = form.watch('name'); 
 //     useEffect(() => {
-//         const name = form.getValues('name')
 //         if (nameValue) {
 //             form.setValue('slug', slugify(nameValue, { lower: true }));
-//             // form.setValue('slug', slugify(name).toLowerCase())
 //         }
 //     }, [nameValue])
 
-//     // discountPercentage calculation
 //     useEffect (() =>  {
 //         const mrp = form.getValues('mrp') || 0
 //         const sellingPrice = form.getValues('sellingPrice') || 0
-
 //         if(mrp > 0 && sellingPrice > 0 ){
-//         const discountPercentage = ((mrp - sellingPrice) / mrp) * 100
-//         form.setValue('discountPercentage' , Math.round(discountPercentage))
+//             const discountPercentage = ((mrp - sellingPrice) / mrp) * 100
+//             form.setValue('discountPercentage' , Math.round(discountPercentage))
 //         }
 //     }, [form.watch('mrp'), form.watch('sellingPrice')])
     
-
 //     const editor = (event, editor) => {
 //         const data = editor.getData()
 //         form.setValue('description', data)
 //     }
 
 //     const onSubmit = async (values) => {
+//          console.log("submit clicked");
+//          console.log("form values:", values);
+//          console.log("selectedMedia:", selectedMedia);
 //         setLoading(true)
 //         try {
 //             if (selectedMedia.length <= 0) {
@@ -429,15 +348,17 @@ export default AddProduct
 //                 throw new Error(response.message)
 //             }
 //             form.reset()
-//             setSelectedMedia([])  // clear media selection
+//             setSelectedMedia([])  
 
 //             showToast('success', response.message)
 //         } catch (error) {
+//             console.error(error); // log full error
 //             showToast('error', error.message)
 //         } finally {
 //             setLoading(false)
 //         }
 //     }
+
 
 //     return (
 //         <div>
@@ -449,8 +370,10 @@ export default AddProduct
 //                 </CardHeader>
 //                 <CardContent className='pb-5'>
 
-//                     <Form {...form}>
-//                         <form onSubmit={form.handleSubmit(onSubmit)} >
+//                     {/* <Form {...form}
+//                         onSubmit={form.handleSubmit(onSubmit)} > */}
+//                         <FormProvider {...form}>
+//                         <form onSubmit={form.handleSubmit(onSubmit)}>
 //                             <div className="grid md:grid-cols-2 gap-5" >
 //                                 {/* Name */}
 //                                 <div className="">
@@ -459,12 +382,15 @@ export default AddProduct
 //                                         name="name"
 //                                         render={({ field }) => (
 //                                             <FormItem>
-//                                                 <FormLabel>
+//                                                 <FormLabel htmlFor="name">
 //                                                     Name <span className="text-red-500">*</span>
 //                                                 </FormLabel>
 //                                                 <FormControl>
 //                                                     <Input
 //                                                         type="text"
+//                                                         id="name"
+//                                                         name="name"
+//                                                         autoComplete="product-name"
 //                                                         placeholder="Enter product name"
 //                                                         {...field}
 //                                                     />
@@ -481,12 +407,15 @@ export default AddProduct
 //                                         name="slug"
 //                                         render={({ field }) => (
 //                                             <FormItem>
-//                                                 <FormLabel>
+//                                                 <FormLabel htmlFor="slug">
 //                                                     Slug <span className="text-red-500">*</span>
 //                                                 </FormLabel>
 //                                                 <FormControl>
 //                                                     <Input
 //                                                         type="text"
+//                                                         id="slug"
+//                                                         name="slug"
+//                                                         autoComplete="product-slug"
 //                                                         placeholder="Enter slug e.g. mobile-phones"
 //                                                         {...field}
 //                                                     />
@@ -503,11 +432,13 @@ export default AddProduct
 //                                         name="category"
 //                                         render={({ field }) => (
 //                                             <FormItem>
-//                                                 <FormLabel>
+//                                                 <FormLabel htmlFor="category">
 //                                                     Category <span className="text-red-500">*</span>
 //                                                 </FormLabel>
 //                                                 <FormControl>
 //                                                     <Select
+//                                                         id="category"
+//                                                         name="category"
 //                                                         options={categoryOption}
 //                                                         selected={field.value}
 //                                                         setSelected={field.onChange}
@@ -526,9 +457,16 @@ export default AddProduct
 //                                         name="subCategory"
 //                                         render={({ field }) => (
 //                                             <FormItem>
-//                                                 <FormLabel>Sub Category</FormLabel>
+//                                                 <FormLabel htmlFor="subCategory">Sub Category</FormLabel>
 //                                                 <FormControl>
-//                                                     <Input type="text" placeholder="Enter product sub-category" {...field} />
+//                                                     <Input
+//                                                         type="text"
+//                                                         id="subCategory"
+//                                                         name="subCategory"
+//                                                         autoComplete="off"
+//                                                         placeholder="Enter product sub-category"
+//                                                         {...field}
+//                                                     />
 //                                                 </FormControl>
 //                                                 <FormMessage />
 //                                             </FormItem>
@@ -542,12 +480,13 @@ export default AddProduct
 //                                         name="mrp"
 //                                         render={({ field }) => (
 //                                             <FormItem>
-//                                                 <FormLabel>
-//                                                     MRP
-//                                                 </FormLabel>
+//                                                 <FormLabel htmlFor="mrp">MRP</FormLabel>
 //                                                 <FormControl>
 //                                                     <Input
 //                                                         type="number"
+//                                                         id="mrp"
+//                                                         name="mrp"
+//                                                         autoComplete="off"
 //                                                         placeholder="Enter Maximum Retail Price"
 //                                                         {...field}
 //                                                     />
@@ -564,12 +503,15 @@ export default AddProduct
 //                                         name="sellingPrice"
 //                                         render={({ field }) => (
 //                                             <FormItem>
-//                                                 <FormLabel>
+//                                                 <FormLabel htmlFor="sellingPrice">
 //                                                     Selling Price <span className="text-red-500">*</span>
 //                                                 </FormLabel>
 //                                                 <FormControl>
 //                                                     <Input
 //                                                         type="number"
+//                                                         id="sellingPrice"
+//                                                         name="sellingPrice"
+//                                                         autoComplete="off"
 //                                                         placeholder="Enter selling price"
 //                                                         {...field}
 //                                                     />
@@ -586,10 +528,13 @@ export default AddProduct
 //                                         name="discountPercentage"
 //                                         render={({ field }) => (
 //                                             <FormItem>
-//                                                 <FormLabel>Discount Percentage (%)</FormLabel>
+//                                                 <FormLabel htmlFor="discountPercentage">Discount Percentage (%)</FormLabel>
 //                                                 <FormControl>
 //                                                     <Input
 //                                                         type="number"
+//                                                         id="discountPercentage"
+//                                                         name="discountPercentage"
+//                                                         autoComplete="off"
 //                                                         readOnly
 //                                                         placeholder="Enter discount percentage"
 //                                                         {...field}
@@ -602,8 +547,8 @@ export default AddProduct
 //                                 </div>
 //                                 {/* Description */}
 //                                 <div className="mb-5 md:col-span-2">
-//                                     <FormLabel className="mb-2">Description
-//                                         <span className="text-red-500">*</span>
+//                                     <FormLabel className="mb-2">
+//                                         Description <span className="text-red-500">*</span>
 //                                     </FormLabel>
 //                                     <Editor onChange={editor} initialData={form.getValues('description')} />
 //                                     <FormMessage> </FormMessage>
@@ -637,28 +582,30 @@ export default AddProduct
 
 //                                     <div onClick={() => setOpen(true)} className='bg-gray-50 dark:bg-card border w-[200px] mx-auto p-5 cursor-pointer'>
 //                                         <span className='font-semibold'> Select Media </span>
-
 //                                     </div>
-
-
 //                                 </div>
 //                             </div>
 
 //                             {/* button */}
 //                             <div className="mt-6">
-//                                 <ButtonLoading
-//                                     loading={loading}
-//                                     type="submit"
-//                                     text="Add Product"
-//                                     className="cursor-pointer"
-//                                 />
+//                                 <span>
+//                                     <ButtonLoading
+//                                         loading={loading}
+//                                         type="submit"
+//                                         text="Add Product"
+//                                         className="cursor-pointer"
+//                                     />
+//                                 </span>
 //                             </div>
 
-//                         </form>
-//                     </Form>
+//                     </form>
+//                     </FormProvider>
 //                 </CardContent>
 //             </Card>
 //         </div>
 //     )
 // }
+
 // export default AddProduct
+
+
