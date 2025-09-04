@@ -5,13 +5,11 @@ import DeleteAction from '@/components/Application/Admin/DeleteAction';
 import EditAction from '@/components/Application/Admin/EditAction';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { DT_CATEGORY_COLUMN } from '@/lib/column';
+import { DT_CATEGORY_COLUMN, DT_PRODUCT_COLUMN } from '@/lib/column';
 import { columnConfig } from '@/lib/helperFunction';
-import { ADMIN_CATEGORY_ADD, ADMIN_CATEGORY_EDIT, ADMIN_CATEGORY_SHOW, ADMIN_DASHBOARD, ADMIN_TRASH } from '@/routes/AdminPanelRoutes';
-import Link from 'next/link';
+import { ADMIN_DASHBOARD, ADMIN_TRASH } from '@/routes/AdminPanelRoutes';
 import { useSearchParams } from 'next/navigation';
 import React, { useCallback, useMemo } from 'react'
-import { FiPlus } from 'react-icons/fi';
 
 
 const breadcrumbData = [
@@ -26,7 +24,15 @@ const TRASH_CONFIG = {
     fetchUrl: '/api/category',
     exportUrl: '/api/category/export',
     deleteUrl: '/api/category/delete'
-  }
+  },
+  product: {
+    title: 'Product Trash',
+    columns: DT_PRODUCT_COLUMN,
+    fetchUrl: '/api/product',
+    exportUrl: '/api/product/export',
+    deleteUrl: '/api/product/delete'
+  },
+
 }
 
 const Trash = () => {
