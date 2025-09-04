@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { GiTrumpetFlag } from "react-icons/gi";
 
 const mediaSchema = new mongoose.Schema({
     asset_id:{

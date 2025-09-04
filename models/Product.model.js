@@ -18,6 +18,15 @@ const productSchema = new mongoose.Schema({
         ref: 'Category',
         required: true
     },
+    subCategory:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'subCategory',
+    },
+     media: [
+        { type: mongoose.Schema.Types.ObjectId, ref: 'Media', required: true }
+    ],
+
+
     mrp:{
         type: Number,
     },
@@ -28,13 +37,14 @@ const productSchema = new mongoose.Schema({
     discountPercentage:{
         type: Number,
     },
-    media:[
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Media',
-            required: true
-        }
-    ],
+    // media:[
+    //     {
+    //         type: mongoose.Schema.Types.ObjectId,
+    //         ref: 'Media',
+    //         required: true
+    //     }
+    // ],
+    
     description:{
         type: String,
         required: true
