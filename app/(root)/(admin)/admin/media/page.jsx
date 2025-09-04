@@ -186,7 +186,7 @@ const MediaPage = () => {
                                 :
                                 <>
                                     {data.pages.flatMap(page => page.mediaData.map(media => media._id)).length === 0 && <div > Data not found. </div>}
-                                    <div className='grid lg:grid-cols-5 sm:grid-cols-3 grid-cols-2 gap-2 mb-5'>
+                                    <div className='grid lg:grid-cols-6 grid-cols-3 gap-2'>
                                         {
                                             data?.pages?.map((page, index) => (
                                                 <React.Fragment key={index}>

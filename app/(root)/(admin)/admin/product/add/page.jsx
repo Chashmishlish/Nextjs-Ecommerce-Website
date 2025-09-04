@@ -17,7 +17,8 @@ import axios from 'axios';
 import useFetch from '@/hooks/useFetch';
 import Select from '@/components/Application/Select';
 import Editor from '@/components/Application/Admin/Editor';
-import MediaModel from '@/models/Media.model';
+import MediaModel from '@/components/Application/Admin/MediaModel';
+
 const breadcrumbData = [
     { href: ADMIN_DASHBOARD, label: 'Home' },
     { href: ADMIN_PRODUCT_SHOW, label: 'Products' },
@@ -280,7 +281,7 @@ const AddProduct = () => {
                                     />
 
                                     <div onClick={() => setOpen(true)} className='bg-gray-50 dark:bg-card border w-[200px] mx-auto p-5 cursor-pointer'>
-                                        <span className='font-semibold'></span>
+                                        <span className='font-semibold'> Media </span>
 
                                     </div>
 
