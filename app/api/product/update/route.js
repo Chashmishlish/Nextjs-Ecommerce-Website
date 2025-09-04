@@ -15,6 +15,7 @@ export async function PUT(request) {
     const payload = await request.json()
     
     const schema = zSchema.pick({
+      _id: true,
       name: true,
       slug: true,
       category: true,
@@ -33,7 +34,7 @@ export async function PUT(request) {
 
     const validatedData = validate.data
 
-    const getProduct = await ProductModel.findOne({deletedAt: null, _id })
+    const getProduct = await ProductModel.findOne({deletedAt: null, _id: validatedData._id })
     if(!getProduct) {
       return response(false, 404, 'Data not found.')
     }

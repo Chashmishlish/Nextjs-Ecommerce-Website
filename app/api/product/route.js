@@ -37,13 +37,45 @@ export async function GET(request) {
         if (globalFilter) {
             matchQuery["$or"] = [
                 { name: { $regex: globalFilter, $options: 'i' } },
-                { slug: { $regex: globalFilter, $options: 'i' } }
+                { slug: { $regex: globalFilter, $options: 'i' } },
+                { "categoryData.name": { $regex: globalFilter, $options: 'i' } }, // for searching data in search bar
+                {   
+                    $expr: {
+                        $regexMatch: {
+                            input: {$toString: "$mrp"} ,
+                            regex: globalFilter,
+                            options: "1"
+                        }
+                    }
+                },
+                {   
+                    $expr: {
+                        $regexMatch: {
+                            input: {$toString: "$sellingPrice"} ,
+                            regex: globalFilter,
+                            options: "1"
+                        }
+                    }
+                },
+                {   
+                    $expr: {
+                        $regexMatch: {
+                            input: {$toString: "$discountPercentage"} ,
+                            regex: globalFilter,
+                            options: "1"
+                        }
+                    }
+                },
             ]
         }
 
         // column filteration
         filters.forEach(filter => {
-            matchQuery[filter.id] = { $regex: filter.value, $options: 'i' }
+            if(filter.id === 'mrp' || filter.id === 'sellingPrice' || filter.id === 'discountPercentage'){
+                matchQuery[filter.id] = Number(filter.value)
+            } else {
+                matchQuery[filter.id] = { $regex: filter.value, $options: 'i' }
+            }
         });
 
         // sorting 

@@ -3,6 +3,7 @@ import { catchError, response } from "@/lib/helperFunction"
 import { isValidObjectId } from "mongoose"
 import { isAuthenticated } from "@/lib/authentication"
 import ProductModel from "@/models/Product.model"
+import MediaModel from "@/models/Media.model"
 
 export async function GET(request, {params}){
     try {
@@ -26,7 +27,7 @@ export async function GET(request, {params}){
 
         filter._id = id
 
-        const getProduct = await ProductModel.findOne(filter).lean()
+        const getProduct = await ProductModel.findOne(filter).populate('media', '_id secure_url').lean()
 
         
         if(!getProduct){

@@ -55,7 +55,7 @@ const AddProduct = () => {
       mrp: 0,
       sellingPrice: 0,
       discountPercentage: 0,
-      media: "",
+      // media: "",
       description: "",
     },
   });
@@ -197,8 +197,9 @@ const AddProduct = () => {
 
                 {/* Description */}
                 <div className="md:col-span-2 mb-5">
-                  <FormLabel>Description <span className="text-red-500">*</span></FormLabel>
-                  <Editor onChange={editorChange} initialData={form.getValues('description')} />
+                  <FormLabel htmlFor="description">Description <span className="text-red-500">*</span></FormLabel>
+                  <Editor id="description" onChange={editorChange} initialData={form.getValues('description')} />
+
                   <FormMessage />
                 </div>
 
