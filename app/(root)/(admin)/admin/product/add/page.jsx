@@ -17,6 +17,7 @@ import axios from 'axios';
 import useFetch from '@/hooks/useFetch';
 import Select from '@/components/Application/Select';
 import Editor from '@/components/Application/Admin/Editor';
+import MediaModel from '@/models/Media.model';
 const breadcrumbData = [
     { href: ADMIN_DASHBOARD, label: 'Home' },
     { href: ADMIN_PRODUCT_SHOW, label: 'Products' },
@@ -28,6 +29,10 @@ const AddProduct = () => {
     const [categoryOption, setCategoryOption] = useState([]);
     const { data: getCategory } = useFetch('/api/category?deleteType=SD&&size=100000')
     // console.log(getCategory)
+
+    // media model states
+    const [open, setOpen] = useState(false)
+    const [selectedMedia, setSelectedMedia] = useState([])
 
     useEffect(() => {
         if (getCategory && getCategory.success) {
@@ -260,33 +265,27 @@ const AddProduct = () => {
                                     <FormLabel className="mb-2">Description
                                         <span className="text-red-500">*</span>
                                     </FormLabel>
-                                    <Editor onChange={editor} />
+                                    <Editor onChange={editor} initialData={form.getValues('description')}/>
                                     <FormMessage> </FormMessage>
                                 </div>
 
-                                {/* Media
-                                <div className="">
-                                    <FormField
-                                        control={form.control}
-                                        name="media"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    Media <span className="text-red-500">*</span>
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        type="file"
-                                                        accept="image/*"
-                                                        {...field}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
+                                {/* Media */}
+                                <div className="md:col-span-2 border border-dashed rounded p-5 text-center">
+                                    <MediaModel
+                                        open={open}
+                                        setOpen={setOpen}
+                                        selectedMedia={selectedMedia}
+                                        setSelectedMedia={setSelectedMedia}
+                                        isMultiple={true}
                                     />
-                                </div> */}
 
+                                    <div onClick={() => setOpen(true)} className='bg-gray-50 dark:bg-card border w-[200px] mx-auto p-5 cursor-pointer'>
+                                        <span className='font-semibold'></span>
+
+                                    </div>
+
+
+                                </div>
                             </div>
 
                             {/* button */}
