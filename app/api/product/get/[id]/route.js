@@ -2,12 +2,10 @@ import { connectDB } from "@/lib/databaseConnection"
 import { catchError, response } from "@/lib/helperFunction"
 import { isValidObjectId } from "mongoose"
 import { isAuthenticated } from "@/lib/authentication"
-import CategoryModel from "@/models/Category.model"
+import ProductModel from "@/models/Product.model"
 
 export async function GET(request, {params}){
     try {
-
- // Authenticate user (admin only)
         const auth = await isAuthenticated('admin')
         if(!auth.isAuth){
             return response(false, 403, 'Unauthorized.')
@@ -17,10 +15,7 @@ export async function GET(request, {params}){
 
         const getParams = await params
         const id = getParams.id;
-        // // const id = params.id;
-        //  const { id } = await params;
-        // console.log("Fetched ID:", id);
-
+        
         const filter = {
             deletedAt: null 
         }
@@ -31,13 +26,13 @@ export async function GET(request, {params}){
 
         filter._id = id
 
-        const getCategory = await CategoryModel.findOne(filter).lean()
+        const getProduct = await ProductModel.findOne(filter).lean()
 
         
-        if(!getCategory){
-            return response (false, 404, 'Category not found.')
+        if(!getProduct){
+            return response (false, 404, 'Product not found.')
         }
-        return response (true, 200, 'Category found.', getCategory)
+        return response (true, 200, 'Product found.', getProduct)
 
     } catch (error) {
         return catchError(error)
