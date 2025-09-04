@@ -1,14 +1,15 @@
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query'
-import React from 'react'
+import React, { useState } from 'react'
 import loading from '@/public/assests/images/loading.svg'
 import axios from 'axios'
 import Image from 'next/image'
 import ModalMediaBlock from './ModalMediaBlock'
-
+import { showToast } from '@/lib/showToast'
 const MediaModel = ({ open, setOpen, selectedMedia, setSelectedMedia, isMultiple }) => {
 
+  const [previouslySelected, setPreviouslySelected] = useState([])
   const fetchMedia = async (page) => {
     const { data: response } = await axios.get(`/api/media?page=${page}&&limit=18&&deleteType=SD`)
     return response
@@ -36,8 +37,12 @@ const MediaModel = ({ open, setOpen, selectedMedia, setSelectedMedia, isMultiple
   }
 
   const handleSelect = () => {
-    
-  }
+    if(selectedMedia.length <= 0 )
+      return showToast('error' , 'Please select a media')
+  } 
+  setPreviouslySelected(selectedMedia)
+  setOpen(false)
+
 
   return (
     <div>
