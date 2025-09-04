@@ -18,6 +18,7 @@ import useFetch from '@/hooks/useFetch';
 import Select from '@/components/Application/Select';
 import Editor from '@/components/Application/Admin/Editor';
 import MediaModel from '@/components/Application/Admin/MediaModel';
+import Image from 'next/image'
 
 const breadcrumbData = [
     { href: ADMIN_DASHBOARD, label: 'Home' },
@@ -266,7 +267,7 @@ const AddProduct = () => {
                                     <FormLabel className="mb-2">Description
                                         <span className="text-red-500">*</span>
                                     </FormLabel>
-                                    <Editor onChange={editor} initialData={form.getValues('description')}/>
+                                    <Editor onChange={editor} initialData={form.getValues('description')} />
                                     <FormMessage> </FormMessage>
                                 </div>
 
@@ -280,8 +281,24 @@ const AddProduct = () => {
                                         isMultiple={true}
                                     />
 
+                                    {selectedMedia.length > 0 &&
+                                        <div className='flex justify-center items-center flex-wrap mb-3 gap-2'>
+                                            {selectedMedia.map(media => (
+                                                <div key={media._id} className='h-24 w-24 border'>
+                                                    <Image
+                                                        src={media.url}
+                                                        height={100}
+                                                        width={100}
+                                                        alt=''
+                                                        className='size-full object-cover'
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    }
+
                                     <div onClick={() => setOpen(true)} className='bg-gray-50 dark:bg-card border w-[200px] mx-auto p-5 cursor-pointer'>
-                                        <span className='font-semibold'> Media </span>
+                                        <span className='font-semibold'> Select Media </span>
 
                                     </div>
 

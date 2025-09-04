@@ -27,25 +27,27 @@ const MediaModel = ({ open, setOpen, selectedMedia, setSelectedMedia, isMultiple
   })
 
   const handleClear = () => {
-
+    setSelectedMedia([])
+    setPreviouslySelected([])
+    showToast('success', 'Media selection cleared.')
   }
 
   const handleClose = () => {
-    // setSelectedMedia()
+    setSelectedMedia(previouslySelected)
     setOpen(false)
 
   }
 
   const handleSelect = () => {
-    if(selectedMedia.length <= 0 )
+    if(selectedMedia.length <= 0 ) {
       return showToast('error' , 'Please select a media')
   } 
   setPreviouslySelected(selectedMedia)
   setOpen(false)
-
+}
 
   return (
-    <div>
+  
       <Dialog
         open={open}
         onOpenChange={() => setOpen(!open)}
@@ -115,7 +117,7 @@ const MediaModel = ({ open, setOpen, selectedMedia, setSelectedMedia, isMultiple
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+    
   )
 }
 
