@@ -48,7 +48,7 @@ export async function POST(request) {
     return response(true, 200, 'Product added successfully.')
 
   } catch (error) {
-    console.log("PRODUCT SAVE ERROR:", error);
+    // console.log("PRODUCT SAVE ERROR:", error);
     return catchError(error)
 
   }
