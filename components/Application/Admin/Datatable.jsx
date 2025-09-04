@@ -64,38 +64,77 @@ const Datatable = ({
     }
   }
 
-  // export handler
+  // // export handler
+  // const handleExport = async (selectedRows) => {
+  //   setExportLoading(true)
+  //   try {
+  //     const csvConfig = mkConfig({
+  //       fieldSeparator: ',',
+  //       decimalSeparator: ',',
+  //       useKeysAsHeaders: true,
+  //       filename: 'csv-data'
+  //     })
+
+  //     let csv
+
+  //     if (Object.keys(rowSelection).length > 0) {
+  //       // export only selected rows
+  //       const rowData = selectedRows.map((row) => row.original)
+  //       csv = generateCsv(csvConfig)(rowData)
+  //     } else {
+  //       // export all rows
+  //       const { data: response } = await axios.get(exportEndpoint)
+  //       if (!response.success) throw new Error(response.message)
+  //       csv = generateCsv(csvConfig)(response.data)
+  //     }
+
+  //     download(csvConfig)(csv)
+  //   } catch (error) {
+  //     console.log(error)
+  //     showToast('error', error.message)
+  //   } finally {
+  //     setExportLoading(false)
+  //   }
+  // }
+
   const handleExport = async (selectedRows) => {
     setExportLoading(true)
     try {
-      const csvConfig = mkConfig({
-        fieldSeparator: ',',
-        decimalSeparator: ',',
-        useKeysAsHeaders: true,
-        filename: 'csv-data'
-      })
+        const csvConfig = mkConfig({
+            fieldSeparator: ',',
+            decimalSeparator: ',',
+            useKeysAsHeaders: true,
+            filename: 'export-data'   // generic name
+        })
 
-      let csv
+        let rowData = []
 
-      if (Object.keys(rowSelection).length > 0) {
-        // export only selected rows
-        const rowData = selectedRows.map((row) => row.original)
-        csv = generateCsv(csvConfig)(rowData)
-      } else {
-        // export all rows
-        const { data: response } = await axios.get(exportEndpoint)
-        if (!response.success) throw new Error(response.message)
-        csv = generateCsv(csvConfig)(response.data)
-      }
+        if (selectedRows && Object.keys(rowSelection).length > 0) {
+            // selected rows export
+            rowData = selectedRows.map(row => row.original)
+        } else {
+            // fetch all rows from backend (generic endpoint)
+            const { data: response } = await axios.get(exportEndpoint)
 
-      download(csvConfig)(csv)
+            // safe fallback
+            rowData = response?.data || []
+
+            if (!Array.isArray(rowData) || rowData.length === 0) {
+                showToast('error', 'No data available to export')
+                return
+            }
+        }
+
+        const csv = generateCsv(csvConfig)(rowData)
+        download(csvConfig)(csv)
     } catch (error) {
-      console.log(error)
-      showToast('error', error.message)
+        console.log(error)
+        showToast('error', error?.message || 'Something went wrong')
     } finally {
-      setExportLoading(false)
+        setExportLoading(false)
     }
-  }
+}
+
 
   // fetch data
   const {
