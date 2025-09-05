@@ -99,14 +99,14 @@ export async function GET(request) {
         ]
 
         // Execute query
-        const getProduct = await CouponModel.aggregate(aggregatePipeline)
+        const getCoupon = await CouponModel.aggregate(aggregatePipeline)
 
         // Get total row count
         const totalRowCount = await CouponModel.countDocuments(matchQuery)
 
         return NextResponse.json({
             success: true,  // coupon>add>page.jsx 
-            data: getProduct,
+            data: getCoupon,
             meta: { totalRowCount }
         })
 
