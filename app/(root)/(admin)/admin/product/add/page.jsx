@@ -245,7 +245,7 @@ const onSubmit = async (values) => {
                 name="discountPercentage"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel >Discount (%)</FormLabel>
+                    <FormLabel >D(%)</FormLabel>
                     <FormControl><Input id="discountPercentage" type="number" readOnly {...field} /></FormControl>
                     <FormMessage />
                   </FormItem>
