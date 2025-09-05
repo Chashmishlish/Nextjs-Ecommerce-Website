@@ -5,7 +5,7 @@ import DeleteAction from '@/components/Application/Admin/DeleteAction';
 import EditAction from '@/components/Application/Admin/EditAction';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { DT_CATEGORY_COLUMN, DT_PRODUCT_COLUMN, DT_PRODUCT_VARIANT_COLUMN } from '@/lib/column';
+import { DT_CATEGORY_COLUMN, DT_COUPON_COLUMN, DT_PRODUCT_COLUMN, DT_PRODUCT_VARIANT_COLUMN } from '@/lib/column';
 import { columnConfig } from '@/lib/helperFunction';
 import { ADMIN_DASHBOARD, ADMIN_TRASH } from '@/routes/AdminPanelRoutes';
 import { useSearchParams } from 'next/navigation';
@@ -39,7 +39,13 @@ const TRASH_CONFIG = {
     exportUrl: '/api/product-variant/export',
     deleteUrl: '/api/product-variant/delete'
   },
-
+  coupon: {
+    title: 'Coupon Trash',
+    columns: DT_COUPON_COLUMN,
+    fetchUrl: '/api/coupon',
+    exportUrl: '/api/coupon/export',
+    deleteUrl: '/api/coupon/delete'
+  },
 }
 
 const Trash = () => {
