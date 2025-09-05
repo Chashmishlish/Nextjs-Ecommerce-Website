@@ -65,8 +65,12 @@ export async function DELETE(request) {
             return response(false, 404, 'Data not found.')
         }
 
-        if (!deleteType === 'PD') {
-            return response(false, 400, 'Invalid delete operation. Delete type should be PD for this route. ')
+        // if (!deleteType === 'PD') {
+        //     return response(false, 400, 'Invalid delete operation. Delete type should be PD for this route. ')
+        // }
+
+         if (deleteType !== 'PD') {
+                    return response(false, 400, 'Invalid delete operation. Delete type should be PD for this route.')
         }
 
         await CouponModel.deleteMany({ _id: { $in: ids } })
