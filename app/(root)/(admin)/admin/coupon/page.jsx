@@ -38,7 +38,7 @@ const showCoupon = () => {
       <Card className="py-0 rounded shadow-sm gap-0">
         <CardHeader className="pt-3 px-3 border-b [.border-b]:pb-2">
           <div className='flex justify-between items-center'>
-            <h4 className='text-xl font-semibold'> Show Coupon </h4>
+            <h4 className='text-xl font-semibold'> Show Coupons </h4>
             <Button >
               <FiPlus />
               <Link href={ADMIN_COUPON_ADD}>New Coupon</Link>
