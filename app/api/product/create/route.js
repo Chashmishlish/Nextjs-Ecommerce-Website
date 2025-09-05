@@ -3,6 +3,7 @@ import { connectDB } from "@/lib/databaseConnection"
 import { catchError, response } from "@/lib/helperFunction"
 import { zSchema } from "@/lib/zodSchema"
 import ProductModel from "@/models/Product.model"
+import { encode } from "entities"
 
 export async function POST(request) {
   try {
@@ -42,7 +43,7 @@ export async function POST(request) {
       sellingPrice: productData.sellingPrice,
       discountPercentage: productData.discountPercentage,
       media: productData.media,
-      description: productData.description
+      description: encode(productData.description)
     })
 
     await newProduct.save()
