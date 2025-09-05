@@ -1,5 +1,4 @@
 "use client";
-
 import BreadCrumb from '@/components/Application/Admin/BreadCrumb';
 import { ADMIN_DASHBOARD, ADMIN_PRODUCT_SHOW } from '@/routes/AdminPanelRoutes';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from "@/components/ui/form";
@@ -19,7 +18,6 @@ import Select from '@/components/Application/Select';
 import Editor from '@/components/Application/Admin/Editor';
 import MediaModel from '@/components/Application/Admin/MediaModel';
 import Image from 'next/image'
-
 const breadcrumbData = [
   { href: ADMIN_DASHBOARD, label: 'Home' },
   { href: ADMIN_PRODUCT_SHOW, label: 'Products' },
@@ -32,7 +30,6 @@ const EditProduct = ({ params }) => {
   const [categoryOption, setCategoryOption] = useState([]);
   const { data: getCategory } = useFetch('/api/category?deleteType=SD&&size=1000000')
   const { data: getProduct, loading: getProductLoading } = useFetch(`/api/product/get/${id}`)
-  console.log(getProduct)
 
   // media model states
   const [open, setOpen] = useState(false)
@@ -42,7 +39,6 @@ const EditProduct = ({ params }) => {
     if (getCategory && getCategory.success) {
       const data = getCategory.data
       const options = data.map((cat) => ({ label: cat.name, value: cat._id }))
-      // console.log(options)
       setCategoryOption(options)
     }
   }, [getCategory])
@@ -52,11 +48,10 @@ const EditProduct = ({ params }) => {
     name: true,
     slug: true,
     category: true,
-    subCategory: true,  // Optional hi rahega
+    // subCategory: true, 
     mrp: true,
     sellingPrice: true,
     discountPercentage: true,
-    // media: true,
     description: true,
   });
 
@@ -67,7 +62,7 @@ const EditProduct = ({ params }) => {
       name: "",
       slug: "",
       category: "",
-      subCategory: "",
+      // subCategory: "",
       mrp: 0,
       sellingPrice: 0,
       discountPercentage: 0,
@@ -83,70 +78,62 @@ const EditProduct = ({ params }) => {
       name: product?.name,
       slug: product?.slug,
       category: product?.category,
-      subCategory: product?.subCategory,
+      // subCategory: product?.subCategory,
       mrp: product?.mrp,
       sellingPrice: product?.sellingPrice,
       discountPercentage: product?.discountPercentage,
       description: product?.description,
       })
-
     if (product.media) {
       const media = product.media.map((media) => ({
         _id: media._id,
         url: media.secure_url
       }));
       setSelectedMedia(media);
-    }
-  }
-}, [getProduct]);
+      }
+      }
+      }, [getProduct]);
 
-  // console.log(form);
-useEffect(() => {
-  const name = form.getValues('name')
-  if (name) {
-    form.setValue('slug', slugify(name, { lower: true }));
-  }
-}, [form.watch('name')])
+    useEffect(() => {
+      const name = form.getValues('name')
+      if (name) {
+        form.setValue('slug', slugify(name, { lower: true }));
+      }
+    }, [form.watch('name')])
 
     // Auto-calculate discount
     useEffect(() => {
       const mrp = form.getValues('mrp') || 0;
       const sellingPrice = form.getValues('sellingPrice') || 0;
+
       if (mrp > 0 && sellingPrice > 0) {
-        const discount = Math.round(((mrp - sellingPrice) / mrp) * 100);
-        form.setValue('discountPercentage', discount);
+        const discountPercentage = (((mrp - sellingPrice) / mrp) * 100);
+        form.setValue('discountPercentage',  Math.round(discountPercentage));
       }
     }, [form.watch('mrp'), form.watch('sellingPrice')]);
   
     const editor = (event, editor) => {
       const data = editor.getData();
       form.setValue('description', data);
-    };
+    }
+
   const onSubmit = async (values) => {
-    console.log("onSubmit fired with data:", values);
     setLoading(true);
     try {
       if (selectedMedia.length <= 0) {
         return showToast('error', 'Please select media.');
       }
-  
-      // SubCategory ko optional bana diya
-        values.subCategory = values.subCategory || null;
-  
+
       const mediaIds = selectedMedia.map(media => media._id)
       values.media = mediaIds
   
-      const { data: response } = await axios.post('/api/product/create', values);
-  
+      const { data: response } = await axios.put('/api/product/update', values);
       if (!response.success) {
         throw new Error(response.message);
       }
-      form.reset();
-      // setSelectedMedia([]);
+
       showToast('success', response.message);
-  
     } catch (error) {
-      console.error(error);
       showToast('error', error.message);
     } finally {
       setLoading(false);
@@ -220,19 +207,6 @@ useEffect(() => {
                 </div>
 
                 <div className=''>
-                {/* SubCategory */}
-                <FormField control={form.control} name="subCategory" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Sub Category</FormLabel>
-                    <FormControl>
-                      <Input id="subCategory" placeholder="Enter product sub-category" {...field} /></FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} 
-                />
-                </div>
-
-                <div className=''>
                 {/* MRP */}
                 <FormField control={form.control} 
                 name="mrp" 
@@ -280,7 +254,9 @@ useEffect(() => {
                 {/* Description */}
                 <div className="md:col-span-2 mb-5">
                   <FormLabel className="mb-2">Description <span className="text-red-500">*</span></FormLabel>
-                  <Editor onChange={editor} />
+                  {!getProductLoading && 
+                    <Editor onChange={editor} initialData={form.getValues('description')}/>
+                  }
                   <FormMessage></FormMessage>
                 </div>
 
@@ -321,7 +297,6 @@ useEffect(() => {
                   type="submit"
                   text="Save Changes"
                   className="cursor-pointer"
-                  // text={loading ? "Adding..." : "Add Product"}
                 />
                 </div>
             </form>
@@ -329,6 +304,6 @@ useEffect(() => {
         </CardContent>
       </Card>
     </div>
-  );
-};
+  )
+}
 export default EditProduct

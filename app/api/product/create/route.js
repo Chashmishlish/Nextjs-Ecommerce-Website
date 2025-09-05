@@ -18,7 +18,7 @@ export async function POST(request) {
       name: true,
       slug: true,
       category: true,
-      subCategory: true,
+      // subCategory: true,
       mrp: true,
       sellingPrice: true,
       discountPercentage: true,
@@ -37,7 +37,7 @@ export async function POST(request) {
       name: productData.name,
       slug: productData.slug,
       category: productData.category,
-      subCategory: productData.subCategory,
+      // subCategory: productData.subCategory,
       mrp: productData.mrp,
       sellingPrice: productData.sellingPrice,
       discountPercentage: productData.discountPercentage,
@@ -49,7 +49,6 @@ export async function POST(request) {
     return response(true, 200, 'Product added successfully.')
 
   } catch (error) {
-    // console.log("PRODUCT SAVE ERROR:", error);
     return catchError(error)
 
   }

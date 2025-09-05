@@ -18,11 +18,11 @@ const productSchema = new mongoose.Schema({
         ref: 'Category',
         required: true
     },
-    subCategory:{
-        type: String,
-        ref: 'subCategory',
-        required: false,
-    },
+    // subCategory:{
+    //     type: String,
+    //     ref: 'subCategory',
+    //     required: false,
+    // },
     mrp:{
         type: Number,
     },

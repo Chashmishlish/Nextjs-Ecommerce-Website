@@ -112,7 +112,7 @@ export async function GET(request) {
                     sellingPrice: 1,
                     discountPercentage: 1,
                     category: "$categoryData.name",
-                    subCategory: 1, 
+                    // subCategory: 1, 
                     createdAt: 1,
                     updatedAt: 1,
                     deletedAt: 1

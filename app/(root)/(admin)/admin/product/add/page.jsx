@@ -44,7 +44,7 @@ const AddProduct = () => {
     name: true,
     slug: true,
     category: true,
-    subCategory: true,
+    // subCategory: true,
     mrp: true,
     sellingPrice: true,
     discountPercentage: true,
@@ -58,7 +58,7 @@ const AddProduct = () => {
       name: "",
       slug: "",
       category: "",
-      subCategory: "",
+      // subCategory: "",
       mrp: 0,
       sellingPrice: 0,
       discountPercentage: 0,
@@ -109,7 +109,7 @@ const onSubmit = async (values) => {
     }
 
     const mediaIds = selectedMedia.map(media => media._id)
-    values.subCategory = values.subCategory || null; // optional fix
+    // values.subCategory = values.subCategory || null; // optional fix
     values.media = mediaIds
 
     const { data: response } = await axios.post('/api/product/create', values);
@@ -189,19 +189,6 @@ const onSubmit = async (values) => {
                         isMulti={false}
                       />
                     </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} 
-                />
-                </div>
-
-                <div className=''>
-                {/* SubCategory */}
-                <FormField control={form.control} name="subCategory" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Sub Category</FormLabel>
-                    <FormControl>
-                      <Input id="subCategory" placeholder="Enter product sub-category" {...field} /></FormControl>
                     <FormMessage />
                   </FormItem>
                 )} 
