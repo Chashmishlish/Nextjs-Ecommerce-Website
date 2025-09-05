@@ -12,6 +12,8 @@ import { use, useEffect, useState } from 'react';
 import { showToast } from '@/lib/showToast';
 import axios from 'axios';
 import useFetch from '@/hooks/useFetch';
+import dayjs from 'dayjs';
+
 const breadcrumbData = [
   { href: ADMIN_DASHBOARD, label: 'Home' },
   { href: ADMIN_COUPON_SHOW, label: 'Coupons' },
@@ -21,8 +23,7 @@ const breadcrumbData = [
 const EditCoupon = ({ params }) => {
   const { id } = use(params); 
   const [loading, setLoading] = useState(false);
-
-    console.log("id from params:", id); // Debugging
+    // console.log("id from params:", id); // Debugging
 
 
   const { data: getCouponData} = useFetch(`/api/coupon/get/${id}`)
@@ -47,37 +48,18 @@ const EditCoupon = ({ params }) => {
     },
   })
 
-  useEffect(() => {
-  if (getCouponData?.success && getCouponData.data) {
-    const coupon = getCouponData.data;
 
-    const formattedDate = coupon.validity
-      ? new Date(coupon.validity).toISOString().split("T")[0]
-      : ""; // fallback if no date
-
-    form.reset({
-      code: coupon.code || "",
-      discountPercent: coupon.discountPercent || "",
-      minimumShoppingAmount: coupon.minimumShoppingAmount || "",
-      validity: formattedDate,
-    });
-
-    console.log("reset with:", { ...coupon, validity: formattedDate });
-  }
-}, [getCouponData]);
-
-  // useEffect(()=> {
-  //   if(getCouponData && getCouponData.success){
-  //     const coupon = getCouponData.data
-  //     form.reset({
-  //     code: coupon.code ,
-  //     discountPercent: coupon.discountPercent,
-  //     minimumShoppingAmount: coupon.minimumShoppingAmount ,
-  //     validity: coupon.validity,
-  //     //validity: (coupon.validity).format('YYYY-MM-DD') ,
-  //     })
-  //   }
-  // }, [getCouponData])
+  useEffect(()=> {
+    if(getCouponData && getCouponData.success){
+      const coupon = getCouponData.data
+      form.reset({
+      code: coupon.code ,
+      discountPercent: coupon.discountPercent,
+      minimumShoppingAmount: coupon.minimumShoppingAmount ,
+      validity: dayjs(coupon.validity).format('YYYY-MM-DD') ,
+      })
+    }
+  }, [getCouponData])
    
   const onSubmit = async (values) => {
     setLoading(true);
