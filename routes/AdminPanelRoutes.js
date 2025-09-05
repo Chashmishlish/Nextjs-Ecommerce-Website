@@ -30,3 +30,8 @@ export const ADMIN_COUPON_EDIT = (id) => id ? `/admin/coupon/edit/${id}` : "";
 
 // customer routes
 export const ADMIN_CUSTOMERS_SHOW = '/admin/customers'
+
+// Review routes
+export const ADMIN_REVIEW_SHOW = '/admin/review'
+
+
