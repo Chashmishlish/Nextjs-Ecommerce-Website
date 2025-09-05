@@ -38,7 +38,7 @@ export async function GET(request) {
             matchQuery["$or"] = [
                 { name: { $regex: globalFilter, $options: 'i' } },
                 { slug: { $regex: globalFilter, $options: 'i' } },
-                { "categoryData.name": { $regex: globalFilter, $options: 'i' } }, // for searching data in search bar
+                { "$categoryData.name": { $regex: globalFilter, $options: 'i' } }, // for searching data in search bar
                 {   
                     $expr: {
                         $regexMatch: {
