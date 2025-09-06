@@ -1,3 +1,5 @@
+"use client"
+
 import {useState, useMemo, useEffect} from 'react'
 import axios from 'axios'
 // app / (root) / (admin) / admin / media / edit / [id] / page.jsx
