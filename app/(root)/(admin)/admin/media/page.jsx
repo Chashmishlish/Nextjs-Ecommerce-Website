@@ -17,7 +17,7 @@ import ButtonLoading from '@/components/Application/ButtonLoading'
 
 const breadcrumbData = [
     { href: ADMIN_DASHBOARD, label: 'Home' },
-    { href: "" , label: 'Media' },
+    { href: "", label: 'Media' },
 ]
 
 const MediaPage = () => {
@@ -42,7 +42,7 @@ const MediaPage = () => {
     }, [searchParams])
 
     const fetchMedia = async (page, deleteType) => {
-        const { data: response } = await axios.get(`/api/media?page=${page}&&limit=10&&deleteType=${deleteType}`)
+        const { data: response } = await axios.get(`/api/media?page=${page}&limit=10&deleteType=${deleteType}`)
         // console.log(response);
         return response
     };
@@ -66,7 +66,7 @@ const MediaPage = () => {
     //   console.log(data);
 
     const deleteMutation = useDeleteMutation('media-data', '/api/media/delete')
-    
+
     const handleDelete = (ids, deleteType) => {
         let c = true
         if (deleteType === 'PD') {
@@ -185,7 +185,11 @@ const MediaPage = () => {
                                 </div>
                                 :
                                 <>
-                                    {data.pages.flatMap(page => page.mediaData.map(media => media._id)).length === 0 && <div > Data not found. </div>}
+                                    {/* {data.pages.flatMap(page => page.mediaData.map(media => media._id)).length === 0 && <div > Data not found. </div>} */}
+                                    {data?.pages?.flatMap(page => page.mediaData).length === 0 && (
+                                        <div>Data not found.</div>
+                                    )}
+
                                     <div className='grid lg:grid-cols-6 grid-cols-3 gap-2'>
                                         {
                                             data?.pages?.map((page, index) => (
@@ -210,7 +214,7 @@ const MediaPage = () => {
                     }
 
                     {hasNextPage &&
-                    <ButtonLoading type="button" className="cursor-pointer" loading={isFetching} onClick={() => fetchNextPage()} text="Load More"/>
+                        <ButtonLoading type="button" className="cursor-pointer mt-6" loading={isFetching} onClick={() => fetchNextPage()} text="Load More" />
                     }
                 </CardContent>
             </Card>
