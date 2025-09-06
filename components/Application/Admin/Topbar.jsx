@@ -5,17 +5,16 @@ import { Button } from '@/components/ui/button'
 import UserDropdown from './UserDropdown'
 import { RiMenu4Fill } from "react-icons/ri";
 import { useSidebar } from '@/components/ui/sidebar';
+import AdminSearch from './AdminSearch'
 
 const Topbar = () => {
     const {toggleSidebar} = useSidebar()
   return (
-//    <div className='fixed border h-14 w-full top-0 left-0 z-30 md:ps-72 md:pe-8
-//      flex justify-between items-center bg-white dark:bg-card'>
         <div className='fixed border h-14 w-full top-0 left-0 z-30 md:ps-72 md:pe-8 px-5
             flex justify-between items-center bg-white dark:bg-card text-black dark:text-white'>
         
-        <div>
-            search component
+        <div >
+            <AdminSearch/>
         </div>
 
 
