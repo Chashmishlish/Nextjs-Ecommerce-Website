@@ -4,6 +4,7 @@ import Link from 'next/link'
 import React from 'react'
 import Banner1 from '@/public/assests/images/Slider1.png'
 import Banner2 from '@/public/assests/images/Slider4.png'
+import FeaturedProduct from '@/components/Application/Website/FeaturedProduct'
 
 const Home = () => {
   return (
@@ -33,6 +34,8 @@ const Home = () => {
 
         </div>
       </section>
+
+      <FeaturedProduct/>
     
     </>
   )
