@@ -140,10 +140,11 @@ const onSubmit = async (values) => {
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="grid md:grid-cols-2 grid-cols-1 gap-5">
 
+              {/* Name */}
                 <div className=''>
-                {/* Name */}
+                
                 <FormField 
                 control={form.control} name="name" render={({ field }) => (
                   <FormItem>
@@ -157,8 +158,9 @@ const onSubmit = async (values) => {
                 />
                 </div>
 
-                <div className=''>
                 {/* Slug */}
+                <div className=''>
+                
                 <FormField 
                 control={form.control} 
                 name="slug" 
@@ -173,8 +175,10 @@ const onSubmit = async (values) => {
                  )} 
                  />
                   </div>
+
+                  {/* Category */}
                   <div className=''>
-                {/* Category */}
+                
                 <FormField 
                 control={form.control} 
                 name="category" 
@@ -209,8 +213,8 @@ const onSubmit = async (values) => {
                 />
                 </div>  
 
-                <div className=''>
                 {/* Selling Price */}
+                <div className=''>
                 <FormField 
                 control={form.control} 
                 name="sellingPrice" 

@@ -112,7 +112,7 @@ const onSubmit = async (values) => {
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="grid md:grid-cols-2 grid-cols-1 gap-5">
 
                 <div className=''>
                 {/* Products */}
@@ -136,13 +136,13 @@ const onSubmit = async (values) => {
                 />
                 </div>
                 <div className=''>
-                {/* sku */}
+                {/* sku : (BrandName-Product-Color-Size) */}
                 <FormField 
                 control={form.control} name="sku" render={({ field }) => (
                   <FormItem>
                     <FormLabel>SKU <span className="text-red-500">*</span></FormLabel>
                     <FormControl>
-                      <Input type="text" placeholder="Enter sku (BrandName-Product-Color-Size)" {...field} />
+                      <Input type="text" placeholder="Enter sku " {...field} />
                       </FormControl>
                     <FormMessage />
                   </FormItem>
