@@ -15,16 +15,28 @@ import { HiChevronLeft } from "react-icons/hi";
 const ArrowNext = (props) => {
   const { onClick } = props
   return (
-    <button onClick={onClick} type='button' className='w-14 h-14 flex justify-center items-center rounded-full absolute z-10 top-1/2 -translate-y-1/2 bg-white right-10'>
-      <HiChevronRight size={20} className='text-pink-600'/>
+//    <button onClick={onClick} type='button' className='w-8 h-8 flex justify-center items-center rounded-full absolute z-10 top-1/2 -translate-y-1/2 bg-white right-10'>
+      <button
+      onClick={onClick}
+      type="button"
+      className="w-8 h-8 flex justify-center items-center rounded-full absolute z-10 
+                 top-1/2 -translate-y-1/2 right-6 bg-white text-pink-600 shadow-md 
+                 transition-colors duration-400 hover:bg-pink-300 hover:text-white"
+    >
+      <HiChevronRight size={18} className='text-pink-600'/>
     </button>
   )
 }
 const ArrowPrev = (props) => {
   const { onClick } = props
   return (
-    <button onClick={onClick} type='button' className='w-14 h-14 flex justify-center items-center rounded-full absolute z-10 top-1/2 -translate-y-1/2 bg-white left-10'>
-      <HiChevronLeft size={20} className='text-pink-600'/>
+    <button onClick={onClick}
+      type="button"
+      className="w-8 h-8 flex justify-center items-center rounded-full absolute z-10 
+                 top-1/2 -translate-y-1/2 left-6 bg-white text-pink-600 shadow-md 
+                 transition-colors duration-300 hover:bg-pink-400 hover:text-white"
+    >
+      <HiChevronLeft size={18} className='text-pink-600'/>
     </button>
   )
 }
