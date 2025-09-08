@@ -5,6 +5,8 @@ import React from 'react'
 import Banner1 from '@/public/assests/images/Slider1.png'
 import Banner2 from '@/public/assests/images/Slider4.png'
 import FeaturedProduct from '@/components/Application/Website/FeaturedProduct'
+import advertisingBanner from '@/public/assests/images/advertising-banner.png'
+
 
 const Home = () => {
   return (
@@ -36,6 +38,16 @@ const Home = () => {
       </section>
 
       <FeaturedProduct/>
+
+      <section className=' sm:pt-20 pt-5 pb-10'>
+        <Image 
+          src={advertisingBanner.src}
+          height={advertisingBanner.height}
+          width={advertisingBanner.width}
+          alt="Advertisement"
+          className="w-full h-auto object-cover"
+        />
+      </section>
     
     </>
   )
