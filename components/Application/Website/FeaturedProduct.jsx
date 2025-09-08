@@ -2,6 +2,7 @@ import axios from 'axios';
 import Link from 'next/link'
 import React from 'react'
 import { MdOutlineDoubleArrow } from "react-icons/md";
+import ProductBox from './ProductBox';
 
 const FeaturedProduct = async () => {
     const {data: productData} = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/product/get-featured-product`)
@@ -23,12 +24,12 @@ const FeaturedProduct = async () => {
                 {!productData.success && <div className='text-center py-5'>Data not found.</div>}
 
                 {productData.success && productData.data.map((product) => (
-                    <div key={product._id}> 
-                        {product?.name}
-                     </div>
+                    <ProductBox key={product._id} product={product}/> 
+                    
                 ))}
             </div>
         </section>
     )
 }
 export default FeaturedProduct
+
