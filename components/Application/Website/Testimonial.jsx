@@ -4,6 +4,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import { FaStar } from "react-icons/fa6";
+import { BsChatQuoteFill } from "react-icons/bs";
 
 const Testimonial = () => {
 
@@ -19,8 +20,8 @@ const Testimonial = () => {
     rating: 4
   },
   {
-    name: "Fatima Ahmed",
-    review: "The customer service was truly impressive. I had some questions before ordering, and they guided me very patiently. The product arrived on time and worked perfectly, just as I expected. Highly satisfied with the service.",
+    name: "Fatima Umair",
+    review: "The customer service was truly impressive. I had some questions before ordering, and they guided me very patiently. The product arrived on time and worked perfectly, just as I expected. Highly satisfied.",
     rating: 5
   },
   {
@@ -45,7 +46,7 @@ const Testimonial = () => {
   },
   {
     name: "Usman Tariq",
-    review: "This was my first time ordering, and I was pleasantly surprised. The delivery was on time, and the product matched the description completely. The only thing I’d improve is slightly faster customer response time.",
+    review: "This was my first time ordering, and I was surprised. The delivery was on time, and the product matched the description. The only thing I’d improve is slightly faster customer response time.",
     rating: 3
   },
   {
@@ -67,7 +68,7 @@ const Testimonial = () => {
         speed: 500,
         autoplay: true,
         slidesToShow: 3,
-        SlidesToScroll: 1,
+        slidesToScroll: 1,
 
         responsive: [
             {
@@ -91,23 +92,35 @@ const Testimonial = () => {
     }
 
     return (
-        <div className='lg:px-32 px-4 sm:pt-20 pt-5 pb-10'>
+        <div className='lg:px-32 px-4 sm:pt-20 pt-50 pb-10'>
             <h2 className='text-center font-semibold sm:text-4xl text-2xl mb-5'>CUSTOMER REVIEW</h2>
             <Slider {...settings}>
                {testimonials.map((item, index) => (
-                <div key={index}>
-                    <p>{item.review}</p>
-                    <h4>{item.name}</h4>
-                    <div className='flex'>
+                <div key={index} className='p-5 '>
+                    {/* <div className="border rounded-lg p-5 h-full flex flex-col justify-between min-h-[300px]"> */}
+                    <div className="border rounded-lg p-5 flex flex-col justify-between min-h-[300px] 
+                     transition duration-500
+                      hover:bg-gradient-to-t hover:from-primary hover:via-pink-300 hover:via-primary-100 hover:to-primary-100 hover:border-pink-500">
+
+                    <BsChatQuoteFill size={30} className='mb-3'/>
+
+                    <p  className=' mb-5'>{item.review}</p>
+                    <h4 className='font-semibold'>{item.name}</h4>
+                    <div className='flex mt-1'>
                         {Array.from({length: item.rating}).map((_, i) => (
                             <FaStar key={`star${i}`} className='text-yellow-400' size={20}/> 
                         ))}
                     </div>
+                    </div>
                 </div>
                ))}
             </Slider>
+
+
         </div>
     )
 }
+
+
 
 export default Testimonial
