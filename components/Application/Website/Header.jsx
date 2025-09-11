@@ -1,5 +1,5 @@
 'use client'
-import { USER_DASHBOARD, WEBSITE_HOME, WEBSITE_LOGIN } from '@/routes/WebsiteRoute'
+import { USER_DASHBOARD, WEBSITE_HOME, WEBSITE_LOGIN, WEBSITE_SHOP } from '@/routes/WebsiteRoute'
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useState } from 'react'
@@ -61,7 +61,7 @@ const Header = () => {
                                 </Link>
                             </li>
                             <li className='text-gray-600 hover:text-primary hover:font-semibold'>
-                                <Link href={WEBSITE_HOME} className='block py-2'>
+                                <Link href={WEBSITE_SHOP} className='block py-2'>
                                     Shop
                                 </Link>
                             </li>
