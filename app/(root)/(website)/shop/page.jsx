@@ -25,3 +25,5 @@ const breadcrumb = {
   ]
 }
 
+const Shop = () => {
+  
