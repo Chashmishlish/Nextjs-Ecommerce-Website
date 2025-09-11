@@ -12,10 +12,12 @@ import { Avatar, AvatarImage } from '@/components/ui/avatar'
 import userIcon from '@/public/assests/images/user.png'
 import { IoMdCloseCircle } from "react-icons/io";
 import { FaBars } from "react-icons/fa6";
+import Search from './Search'
 
 const Header = () => {
     const auth = useSelector(store => store.authStore.auth)
     const [isMobileMenu, setIsMobileMenu] = useState(false)
+    const [showSearch, setShowSearch] = useState(false)
 
     return (
         <div className='bg-white border-b lg:px-32 px-4'>
@@ -82,8 +84,10 @@ const Header = () => {
                             </li>
                         </ul>
                     </nav>
+
+
                     <div className='flex justify-between items-center gap-8'>
-                        <button type='button'>
+                        <button type='button' onClick={() => setShowSearch(!showSearch)}>
                             <LuSearch
                                 className='text-gray-500 hover:text-primary cursor-pointer'
                                 size={25}
@@ -119,6 +123,8 @@ const Header = () => {
                     </div>
                 </div>
             </div>
+
+            <Search  isShow={showSearch}/>
         </div>
     )
 }
