@@ -40,7 +40,15 @@ export async function GET(request) {
         if (sortOption === 'price_low_high') sortquery = { sellingPrice: 1 };
         if (sortOption === 'price_high_low') sortquery = { sellingPrice: -1 };
 
+        // find category by slug
+        let categoryId = [];
+        if (categorySlug) {
+            const slugs = categorySlug.split(",")
+            const categoryData = await CategoryModel.find({
+                deletedAt: null,
+                slug: {$in: slugs},
+            }).select('_id').lean();
+            categoryId = categoryData.map(category => category._id)
+        }
 
-
-
-
+        
