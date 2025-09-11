@@ -26,4 +26,7 @@ const Filter = () => {
   const { data: colorData } = useFetch('/api/product-variant/colors')
   const { data: sizeData } = useFetch('/api/product-variant/size')
 
+  const urlSearchParams = new URLSearchParams(searchParams.toString())
+  const router = useRouter()
+
   
