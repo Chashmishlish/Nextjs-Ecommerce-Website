@@ -18,4 +18,9 @@ const getSize = await ProductVariantModel.aggregate([
             {$project: {_id: 0, size: "$_id"}}
         ])
 
+        if (!getSize.length) {
+            return response(false, 404, 'Size not found.')
+         }
+
+        
          
