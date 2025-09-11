@@ -29,4 +29,13 @@ const Filter = () => {
   const urlSearchParams = new URLSearchParams(searchParams.toString())
   const router = useRouter()
 
+  useEffect(() => {
+    searchParams.get('category') ? setSelectedCategory(searchParams.get('category').split(',')) : setSelectedCategory([])
+
+    searchParams.get('size') ? setSelectedSize(searchParams.get('size').split(',')) : setSelectedSize([])
+
+    searchParams.get('color') ? setSelectedColor(searchParams.get('color').split(',')) : setSelectedColor([])
+  }, [searchParams])
+
+
   
