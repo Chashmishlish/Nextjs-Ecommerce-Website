@@ -31,4 +31,16 @@ export async function GET(request) {
         const skip = page * limit;
 
 
+        // sorting
+        const sortOption = searchParams.get('sort') || 'default_sorting';
+        let sortquery = {};
+        if (sortOption === 'default_sorting') sortquery = { createdAt: -1 };
+        if (sortOption === 'asc') sortquery = { name: 1 };
+        if (sortOption === 'desc') sortquery = { name: -1 };
+        if (sortOption === 'price_low_high') sortquery = { sellingPrice: 1 };
+        if (sortOption === 'price_high_low') sortquery = { sellingPrice: -1 };
+
+
+
+
 
