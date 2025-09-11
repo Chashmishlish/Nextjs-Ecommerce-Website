@@ -34,4 +34,22 @@ const Sorting = ({ limit, setLimit, sorting, setSorting,  mobileFilterOpen, setM
                 ))}
             </ul>
 
-         
+            <Select value={sorting} onValueChange={(value) => setSorting(value)}>
+                <SelectTrigger className="md:w-[180px] w-full bg-white">
+                    <SelectValue placeholder="Default Sorting" />
+                </SelectTrigger>
+                <SelectContent>
+                    {sortings.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                        </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
+
+        </div>
+    )
+}
+
+export default Sorting
+// npx shadcn@latest add select
