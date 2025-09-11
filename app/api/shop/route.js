@@ -141,3 +141,8 @@ export async function GET(request) {
 
 return response(true, 200, 'Product data found.', { products, nextPage });
 
+
+    } catch (error) {
+        return catchError(error)
+    }
+}
