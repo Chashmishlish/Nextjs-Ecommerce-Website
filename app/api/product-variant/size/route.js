@@ -6,4 +6,16 @@ export async function GET() {
     try {
         await connectDB()
 
-        
+const getSize = await ProductVariantModel.aggregate([
+            { $sort: {_id: 1}}, 
+            {
+                $group: {
+                    _id: "$size",
+                    first: {$first: "$_id"}
+                }
+            },
+            {$sort: {first: 1}},
+            {$project: {_id: 0, size: "$_id"}}
+        ])
+
+         
