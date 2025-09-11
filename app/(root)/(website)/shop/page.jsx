@@ -32,4 +32,22 @@ const Shop = () => {
   const [isMobileFilter, setIsMobileFilter] = useState(false)
   const windowSize = useWindowSize()
 
+  // ✅ API call with debug log
+  const fetchProduct = async (pageParam = 0) => {
+    const { data: getProduct } = await axios.get(
+      `/api/shop?page=${pageParam}&limit=${limit}&sort=${sorting}&${searchParams}`
+    )
+
+    // console.log("🔍 API RAW RESPONSE:", getProduct) // 👈 Debug 1
+
+    if (!getProduct.success) {
+      return { products: [], nextPage: null }
+    }
+
+    return {
+      products: getProduct.data?.products || [],
+      nextPage: getProduct.data?.nextPage ?? null,
+    }
+  }
+
   
