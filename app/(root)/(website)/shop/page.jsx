@@ -50,4 +50,19 @@ const Shop = () => {
     }
   }
 
-  
+  // ✅ Infinite query with debug log
+  const {
+    error,
+    data,
+    isFetching,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery({
+    queryKey: ['products', limit, sorting, searchParams],
+    queryFn: ({ pageParam = 0 }) => fetchProduct(pageParam), // start 0-based
+    initialPageParam: 0, // ✅ as you want
+    getNextPageParam: (lastPage) => lastPage?.nextPage ?? null,
+  })
+  // console.log("🟢 useInfiniteQuery DATA:", data) // 👈 Debug 2
+
+ 
