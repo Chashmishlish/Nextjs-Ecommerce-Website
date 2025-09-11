@@ -65,4 +65,66 @@ const Shop = () => {
   })
   // console.log("🟢 useInfiniteQuery DATA:", data) // 👈 Debug 2
 
- 
+  return (
+    <div>
+      <WebsiteBreadcrumb props={breadcrumb} />
+      <section className='lg:flex lg:px-32 px-4 my-20'>
+
+        {windowSize.width > 1024 ? (
+          <div className='w-72 me-4'>
+            <div className='stick top-0 bg-pink-50 p-4 rounded'>
+              <Filter />
+            </div>
+          </div>
+        ) : (
+          <Sheet open={isMobileFilter} onOpenChange={() => setIsMobileFilter(false)}>
+            <SheetContent side='left' className='block'>
+              <SheetHeader className="border-b">
+                <SheetTitle>Filter</SheetTitle>
+              </SheetHeader>
+              <div className=" p-4 overflow-auto h-[calc(100vh-80px)]">
+                <Filter />
+              </div>
+            </SheetContent>
+          </Sheet>
+        )}
+
+        <div className="lg:[calc(100%-18rem)] w-full">
+          <Sorting
+            limit={limit}
+            setLimit={setLimit}
+            sorting={sorting}
+            setSorting={setSorting}
+            mobileFilterOpen={isMobileFilter}
+            setMobileFilterOpen={setIsMobileFilter}
+          />
+
+          {isFetching && <div className='p-3 font-semibold text-center'>Loading...</div>}
+          {error && <div className='p-3 font-semibold text-center'>{error.message}</div>}
+
+          <div className='grid lg:grid-cols-3 grid-cols-2 lg:gap-10 gap-5 mt-10'>
+            {data?.pages.map((page, i) => {
+              // console.log("📦 Page Data:", page) // 👈 Debug 3
+              return page.products.map((product, idx) => (
+                <ProductBox key={`${i}-${idx}`} product={product} />
+              ))
+            })}
+          </div>
+
+          <div className='flex justify-center mt-10 text-center'>
+            {hasNextPage ? (
+              <Button
+                onClick={() => fetchNextPage()}
+                className="px-6 py-2 bg-gradient-to-r from-pink-500 to-pink-800 text-white rounded-lg shadow-md hover:from-pink-600 hover:to-silver-900 transition-all duration-300"
+              >
+                Load More
+              </Button>
+            ) : (
+              <p className="text-gray-500 font-medium">No more data found</p>
+            )}
+          </div>
+        </div>
+      </section>
+    </div>
+  )
+}
