@@ -38,4 +38,62 @@ const Filter = () => {
   }, [searchParams])
 
 
+  const handlePriceChange = (value) => {
+    setPriceFilter({ minPrice: value[0], maxPrice: value[1] })
+  }
+
+  const handleCategoryFilter = (categorySlug) => {
+    let newSelectedCategory = [...selectedCategory];
+    if (newSelectedCategory.includes(categorySlug)) {
+      newSelectedCategory = newSelectedCategory.filter(cat => cat !== categorySlug);
+    } else {
+      newSelectedCategory.push(categorySlug);
+    }
+
+    setSelectedCategory(newSelectedCategory)
+
+    newSelectedCategory.length > 0 ? urlSearchParams.set('category', newSelectedCategory.join(',')) : urlSearchParams.delete('category')
+
+    router.push(`${WEBSITE_SHOP}?${urlSearchParams}`)
+  }
+
+
+  const handleColorFilter = (color) => {
+    let newSelectedColor = [...selectedColor];
+    if (newSelectedColor.includes(color)) {
+      newSelectedColor = newSelectedColor.filter(cat => cat !== color);
+    } else {
+      newSelectedColor.push(color);
+    }
+
+    setSelectedColor(newSelectedColor)
+
+    newSelectedColor.length > 0 ? urlSearchParams.set('color', newSelectedColor.join(',')) : urlSearchParams.delete('color')
+
+    router.push(`${WEBSITE_SHOP}?${urlSearchParams}`)
+
+
+  }
+
+  const handleSizeFilter = (size) => {
+    let newSelectedSize = [...selectedSize];
+    if (newSelectedSize.includes(size)) {
+      newSelectedSize = newSelectedSize.filter(cat => cat !== size);
+    } else {
+      newSelectedSize.push(size);
+    }
+
+    setSelectedSize(newSelectedSize)
+
+    newSelectedSize.length > 0 ? urlSearchParams.set('size', newSelectedSize.join(',')) : urlSearchParams.delete('size')
+
+    router.push(`${WEBSITE_SHOP}?${urlSearchParams}`)
+  }
+
+  const handlePriceFilter = () => {
+    urlSearchParams.set('minPrice', priceFilter.minPrice)
+    urlSearchParams.set('maxPrice', priceFilter.maxPrice)
+    router.push(`${WEBSITE_SHOP}?${urlSearchParams}`)
+  }
+
   
