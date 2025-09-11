@@ -17,7 +17,7 @@ export async function GET(request) {
         const categorySlug = searchParams.get('category');
         const search = searchParams.get('q')
 
-        
+
 
         // // pagination
         // const limit = parseInt(searchParams.get('limit')) || 9;
@@ -46,9 +46,15 @@ export async function GET(request) {
             const slugs = categorySlug.split(",")
             const categoryData = await CategoryModel.find({
                 deletedAt: null,
-                slug: {$in: slugs},
+                slug: { $in: slugs },
             }).select('_id').lean();
             categoryId = categoryData.map(category => category._id)
         }
 
-        
+        // match stage
+        let matchStage = {};
+        if (categoryId.length > 0) matchStage.category = { $in: categoryId }; // filter by category
+
+        if (search) {
+            matchStage.name = { $regex: search, $options: 'i' };
+        }
