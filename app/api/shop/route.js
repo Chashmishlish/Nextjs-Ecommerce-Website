@@ -58,3 +58,78 @@ export async function GET(request) {
         if (search) {
             matchStage.name = { $regex: search, $options: 'i' };
         }
+
+        // aggregation pipeline
+        const products = await ProductModel.aggregate([
+            { $match: matchStage },
+            { $sort: sortquery },
+            { $skip: skip },
+            { $limit: limit + 1 },
+            {
+                $lookup: {
+                    from: 'productvariants',
+                    localField: '_id',
+                    foreignField: 'product',
+                    as: 'variants',
+                }
+            },
+            {
+                $addFields: {
+                    variants: {
+                        $filter: {
+                            input: "$variants",
+                            as: "variant",
+                            cond: {
+                                $and: [
+                                    size ? { $in: ["$$variant.size", size.split(',')] } : { $literal: true },
+                                    color ? { $in: ["$$variant.color", color.split(',')] } : { $literal: true },
+                                    { $gte: ["$$variant.sellingPrice", minPrice] },
+                                    { $lte: ["$$variant.sellingPrice", maxPrice] },
+                                ]
+                            }
+
+                        }
+                    }
+                }
+            },
+            {
+                $match: {
+                    variants: { $ne: [] }
+                }
+            },
+            {
+                $lookup: {
+                    from: 'medias',
+                    localField: 'media',
+                    foreignField: '_id',
+                    as: 'media'
+                }
+            },
+            {
+                $project: {
+                    _id: 1,
+                    name: 1,
+                    slug: 1,
+                    mrp: 1,
+                    sellingPrice: 1,
+                    discountPercentage: 1,
+                    media: {
+                        _id: 1,
+                        secure_url: 1,
+                        alt: 1,
+                    },
+                    variants: {
+                        color: 1,
+                        size: 1,
+                        mrp: 1,
+                        sellingPrice: 1,
+                        discountPercentage: 1,
+                    }
+
+                }
+            }
+
+
+        ]);
+
+        
