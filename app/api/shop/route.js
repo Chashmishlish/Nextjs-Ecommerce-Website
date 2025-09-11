@@ -132,4 +132,11 @@ export async function GET(request) {
 
         ]);
 
+// check if more data exists
+        let nextPage = null;
+        if (products.length > limit) {
+            nextPage = page + 1;
+            products.pop(); // remove extra item
+        }
+
         
