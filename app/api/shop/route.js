@@ -139,4 +139,5 @@ export async function GET(request) {
             products.pop(); // remove extra item
         }
 
-        
+return response(true, 200, 'Product data found.', { products, nextPage });
+
