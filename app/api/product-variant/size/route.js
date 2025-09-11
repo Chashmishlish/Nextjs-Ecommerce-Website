@@ -25,3 +25,8 @@ export async function GET() {
         const sizes = getSize.map(item => item.size)
 
         return response(true, 200, 'Size found.', sizes)
+
+    } catch (error) {
+        return catchError(error)
+    }
+}
