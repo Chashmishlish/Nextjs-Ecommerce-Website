@@ -13,7 +13,8 @@ const useFetch = (url, method = "GET", options = {}) => {
     const requestOptions = useMemo(() => {
         const opts = { ...options }
         if (method === 'POST' && !opts.data) {
-            opts.data = {}
+        return { data: opts.data }  // gpt: yahan se direct body me jaayega
+            // opts.data = {}
         }
         return opts
     }, [method, optionsString])
@@ -26,7 +27,8 @@ const useFetch = (url, method = "GET", options = {}) => {
                 const { data: response } = await axios({
                     url,
                     method,
-                    ...(requestOptions)
+                    ...requestOptions
+                    // ...(requestOptions)
                 })
                 if (!response.success) {
                     throw new Error(response.message)
