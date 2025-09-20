@@ -45,7 +45,7 @@ const AddProduct = () => {
     slug: true,
     category: true,
     // subCategory: true,
-    mrp: true,
+    mrp: false,
     sellingPrice: true,
     discountPercentage: true,
     // media: true,
