@@ -14,4 +14,15 @@ export const authApi = createApi({
         body: credentials,
       }),
     }),
-    
+    verifyOtp: builder.mutation({
+      query: (body) => ({
+        url: "auth/verify-otp", // Sends POST request to /api/auth/verify-otp
+        method: "POST",
+        body,
+      }),
+    }),
+  }),
+});
+
+// Export hooks to use in React components
+export const { useLoginMutation, useVerifyOtpMutation } = authApi;
