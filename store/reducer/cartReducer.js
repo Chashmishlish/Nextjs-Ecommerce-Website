@@ -62,7 +62,16 @@ export const cartReducer = createSlice({
   }
 });
 
+export const {
+  addIntoCart,
+  increaseQuantity,
+  decreaseQuantity,
+  removeFromCart,
+  clearCart,
+} = cartReducer.actions;
 
+export default cartReducer.reducer;
+  
 
 // import { createSlice } from "@reduxjs/toolkit";
 
