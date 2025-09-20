@@ -36,7 +36,18 @@ export const cartReducer = createSlice({
       }
     },
 
+   decreaseQuantity: (state, action) => {
+      const { productId, variantId } = action.payload;
+      const existingProduct = state.products.findIndex(
+        product => product.productId === productId && product.variantId === variantId
+      );
+      if (existingProduct >= 0 && state.products[existingProduct].qty > 1) {
+        state.products[existingProduct].qty -= 1;
+      }
+    },
+
    
+ 
 
 // import { createSlice } from "@reduxjs/toolkit";
 
