@@ -94,7 +94,7 @@ const ResetPassword = () => {
       <CardContent>
         <div className="flex justify-center">
           <Image
-            src="/assests/images/logo-bgw.jpg"
+            src="/assests/images/logo-bgb.png"
             width={150}
             height={100}
             alt="logo"
