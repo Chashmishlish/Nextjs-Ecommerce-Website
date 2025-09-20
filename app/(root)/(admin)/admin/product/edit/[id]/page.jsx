@@ -49,7 +49,7 @@ const EditProduct = ({ params }) => {
     slug: true,
     category: true,
     // subCategory: true, 
-    mrp: true,
+    mrp: false,
     sellingPrice: true,
     discountPercentage: true,
     description: true,
