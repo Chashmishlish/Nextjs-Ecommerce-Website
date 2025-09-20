@@ -1,9 +1,10 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
+// Create an API slice using RTK Query for authentication
 export const authApi = createApi({
-  reducerPath: "authApi",
+  reducerPath: "authApi",  // The key for this slice in the Redux store
   baseQuery: fetchBaseQuery({
-    baseUrl: "/api", // tumhare Next.js API routes ka base path
+    baseUrl: "/api", //  Next.js API routes ka base path
   }),
   endpoints: (builder) => ({
     login: builder.mutation({
@@ -13,14 +14,4 @@ export const authApi = createApi({
         body: credentials,
       }),
     }),
-    verifyOtp: builder.mutation({
-      query: (body) => ({
-        url: "auth/verify-otp", // ye call karega /api/auth/verify-otp
-        method: "POST",
-        body,
-      }),
-    }),
-  }),
-});
-
-export const { useLoginMutation, useVerifyOtpMutation } = authApi;
+    
