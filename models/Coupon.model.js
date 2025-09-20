@@ -3,13 +3,15 @@ import mongoose from "mongoose";
 const couponSchema = new mongoose.Schema({
     code: {
         type: String,
-        required: true,
+        required: false,
+        // required: true,
         unique: true,
         trim: true
     },
     discountPercent:{
         type: Number,
-        required: true,
+        // required: false,
+        // required: true,
         trim: true
     },
     minimumShoppingAmount:{
