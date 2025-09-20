@@ -19,7 +19,7 @@ export async function POST(request) {
     sku: true,
     color: true,
     size: true,
-    mrp: true,
+    mrp: false,
     sellingPrice: true,
     discountPercentage: true,
     media: true
