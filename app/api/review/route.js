@@ -64,7 +64,7 @@ export async function GET(request) {
         const aggregatePipeline = [
             {
                 $lookup:{
-                    form: 'products',
+                    from: 'products',
                     localField: 'product',
                     foreignField: '_id',
                     as: 'productData'
@@ -75,7 +75,7 @@ export async function GET(request) {
             },
             {
                 $lookup:{
-                    form: 'users',
+                    from: 'users',         
                     localField: 'user',
                     foreignField: '_id',
                     as: 'userData'
@@ -93,7 +93,7 @@ export async function GET(request) {
                 $project: {
                     _id: 1,
                     product: '$productData.name',
-                    user: 'userData.name',
+                    user: '$userData.name',
                     rating: 1,
                     review: 1,
                     title: 1,
