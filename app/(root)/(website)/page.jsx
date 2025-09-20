@@ -55,44 +55,45 @@ const Home = () => {
 
       <Testimonial />
 
-      <section className="bg-gradient-to-t from-pink-300 via-pink-200 to-pink-100 lg:px-32 px-4 sm:pt-20 border-t py-10">
-        <div className="grid lg:grid-cols-4 sm:grid-cols-2 grid-cols-1 gap-10 text-center">
+      <section className="bg-gradient-to-t from-pink-300 via-pink-200 to-pink-100 lg:px-32 px-4 sm:pt-20 border-t py-12">
+  <div className="grid lg:grid-cols-4 sm:grid-cols-2 grid-cols-1 gap-10 text-center">
+    
+    {/* Feature 1 */}
+    <div className="flex flex-col items-center transition-transform duration-300 hover:scale-105">
+      <GiReturnArrow size={30} className="text-pink-500 mb-2" />
+      <h3 className="font-semibold text-lg mb-1">7-Days Returns</h3>
+      <p className="text-gray-700">Risk-free shopping with easy returns.</p>
+    </div>
 
+    {/* Feature 2 */}
+    <div className="flex flex-col items-center transition-transform duration-300 hover:scale-105">
+      <FaShippingFast size={30} className="text-pink-500 mb-2" />
+      <h3 className="font-semibold text-lg mb-1">Free Shipping</h3>
+      <p className="text-gray-700">No extra costs, just the price you see.</p>
+    </div>
 
-          <div>
-            <p className="flex justify-center items-center mb-3">
-              <GiReturnArrow size={30} />
-            </p>
-            <h3 className="mb-3 font-semibold">7-Days Returns</h3>
-            <p>Risk-free shopping with easy returns.</p>
-          </div>
-          <div>
-            <p className="flex justify-center items-center mb-3">
-              <FaShippingFast size={30} />
-            </p>
-            <h3 className="mb-3 font-semibold">Free Shipping</h3>
-            <p>No extra costs, just the price you see.</p>
-          </div>
-          <div>
-            <p className="flex justify-center items-center mb-3">
-              <BiSupport size={30} />
-            </p>
-            <h3 className="mb-3 font-semibold">24/7 Support</h3>
-            <p>24/7 support, always here just for you.</p>
-          </div>
-          <div>
-            <p className="flex justify-center items-center mb-3">
-              <TbRosetteDiscountFilled size={30} />
-            </p>
-            <h3 className="mb-3 font-semibold">Member Discounts</h3>
-            <p>Special offers for our loyal customers.</p>
-          </div>
+    {/* Feature 3 */}
+    <div className="flex flex-col items-center transition-transform duration-300 hover:scale-105">
+      <BiSupport size={30} className="text-pink-500 mb-2" />
+      <h3 className="font-semibold text-lg mb-1">24/7 Support</h3>
+      <p className="text-gray-700">24/7 support, always here just for you.</p>
+    </div>
 
-        </div>
-      </section>
+    {/* Feature 4 */}
+    <div className="flex flex-col items-center transition-transform duration-300 hover:scale-105">
+      <TbRosetteDiscountFilled size={30} className="text-pink-500 mb-2" />
+      <h3 className="font-semibold text-lg mb-1">Member Discounts</h3>
+      <p className="text-gray-700">Special offers for our loyal customers.</p>
+    </div>
+
+  </div>
+</section>
+
 
     </>
   )
 }
 
 export default Home
+
+
