@@ -55,7 +55,14 @@ export const cartReducer = createSlice({
       state.count = state.products.length;
     },
 
-    
+   clearCart: (state) => {
+      state.products = [];
+      state.count = 0;
+    }
+  }
+});
+
+
 
 // import { createSlice } from "@reduxjs/toolkit";
 
