@@ -36,42 +36,7 @@ export const cartReducer = createSlice({
       }
     },
 
-    decreaseQuantity: (state, action) => {
-      const { productId, variantId } = action.payload;
-      const existingProduct = state.products.findIndex(
-        product => product.productId === productId && product.variantId === variantId
-      );
-      if (existingProduct >= 0 && state.products[existingProduct].qty > 1) {
-        state.products[existingProduct].qty -= 1;
-      }
-    },
-
-    // FIXED: duplicate hata diya, ab sahi removeFromCart hai
-    removeFromCart: (state, action) => {
-      const { productId, variantId } = action.payload;
-      state.products = state.products.filter(
-        product => !(product.productId === productId && product.variantId === variantId)
-      );
-      state.count = state.products.length;
-    },
-
-    clearCart: (state) => {
-      state.products = [];
-      state.count = 0;
-    }
-  }
-});
-
-export const {
-  addIntoCart,
-  increaseQuantity,
-  decreaseQuantity,
-  removeFromCart,
-  clearCart,
-} = cartReducer.actions;
-
-export default cartReducer.reducer;
-
+   
 
 // import { createSlice } from "@reduxjs/toolkit";
 
