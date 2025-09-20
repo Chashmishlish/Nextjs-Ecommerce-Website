@@ -5,10 +5,14 @@ import { MdOutlineDoubleArrow } from "react-icons/md";
 import ProductBox from './ProductBox';
 
 const FeaturedProduct = async () => {
-    const {data: productData} = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/product/get-featured-product`)
-    console.log(productData)
-
-    if(!productData) return  null
+    let productData = null
+    try {
+        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/product/get-featured-product`)
+        // console.log(productData)
+        productData = data
+    } catch (error) {
+        console.log(error)
+    }
 
     return (
         <section className='lg:px-32 px-4 sm:py-10'>
@@ -20,12 +24,12 @@ const FeaturedProduct = async () => {
                     <MdOutlineDoubleArrow size={18} />
                 </Link>
             </div>
-            <div className='grid md:grid-cols-4 grid-cols-2 sm:gap-10 gap-2'> 
+            <div className='grid md:grid-cols-4 grid-cols-2 sm:gap-10 gap-2'>
                 {!productData.success && <div className='text-center py-5'>Data not found.</div>}
 
                 {productData.success && productData.data.map((product) => (
-                    <ProductBox key={product._id} product={product}/> 
-                    
+                    <ProductBox key={product._id} product={product} />
+
                 ))}
             </div>
         </section>
