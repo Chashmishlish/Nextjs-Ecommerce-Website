@@ -124,3 +124,10 @@
 .slick-dots{
   bottom: 10px !important;
 }
+
+/* Hide Next.js dev portal in development */
+nextjs-portal[style] {
+  display: none !important;
+}
+
+
