@@ -9,6 +9,7 @@ import { AiOutlineLogout } from "react-icons/ai";
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import { logout } from '@/store/reducer/authReducer';
+import { signOut } from 'next-auth/react'
 // import { showToast } from "@/lib/showToast"
 
 const LogoutButton = () => {
@@ -22,6 +23,8 @@ const LogoutButton = () => {
             }
 
             dispatch(logout())
+            // end NextAuth session (if exists)
+            try { await signOut({ redirect: false }) } catch (_) {}
             toast.success(logoutResponse.message);
             router.push(WEBSITE_LOGIN)
         } catch (error) {

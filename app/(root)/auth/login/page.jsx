@@ -20,6 +20,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { login } from "@/store/reducer/authReducer";
 import { ADMIN_DASHBOARD } from "@/routes/AdminPanelRoutes";
+import GoogleLoginButton from "@/components/Application/GoogleLoginButton";
+import { signIn } from "next-auth/react";
 
 // 🔹 Helper to extract error message safely
 const getErrorMessage = (error) => {
@@ -188,6 +190,9 @@ const LogInPage = () => {
                       text="Login"
                       className="w-full cursor-pointer"
                     />
+                  </div>
+                  <div className="my-3">
+                    <GoogleLoginButton text="Login with Google" callbackUrl="/after-google-login" />
                   </div>
                   <div className="text-center">
                     <div className="flex justify-center items-center gap-1 ">

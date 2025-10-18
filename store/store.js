@@ -1,9 +1,7 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit"
-import persistReducer from "redux-persist/es/persistReducer"
-import persistStore from "redux-persist/es/persistStore"
-import localStorage from "redux-persist/es/storage"
+import { persistReducer, persistStore, createMigrate } from "redux-persist"
 // import storage from "redux-persist/lib/storage"
-import storage from "./persistStorage"; // 👈 fix for SSR
+import storage from "./persistStorage"; // 👈 SSR-safe storage shim
 import authReducer from "./reducer/authReducer"
 import cartReducer from "./reducer/cartReducer"
 import { authApi } from "./services/authApi";
@@ -16,13 +14,29 @@ const rootReducer = combineReducers({
 })
 
 
+// One-time migration: previously we persisted a single reducer with root key `auth`.
+// New combined reducer uses `authStore`. Migrate persisted state accordingly.
+const migrations = {
+    1: (state) => {
+        if (!state) return state;
+        // If old root-level `auth` exists and new `authStore` is missing, move it and drop the legacy key
+        if (state.auth !== undefined && state.authStore === undefined) {
+            const { auth, ...rest } = state;
+            return {
+                ...rest,
+                authStore: { auth: auth ?? null },
+            };
+        }
+        return state;
+    },
+};
+
 const persistConfig = {
     key: 'root',
-    storage: localStorage,
-    whitelist: ["authStore", "cartStore"], // ✅ ab cart bhi persist hoga
-
-    //   whitelist: ["auth"], // ✅ only persist auth slice
-
+    version: 1,
+    storage, // use SSR-safe storage shim
+    whitelist: ["authStore", "cartStore"],
+    migrate: createMigrate(migrations, { debug: false }),
 }
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)
@@ -31,10 +45,8 @@ export const store = configureStore({
     reducer: persistedReducer,
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
-            serializableCheck: false
-        })
-    .concat(authApi.middleware),  // ✅ agar RTK Query ka API use karna ho
-
+            serializableCheck: false,
+        }).concat(authApi.middleware),
 })
 
 export const persistor = persistStore(store)

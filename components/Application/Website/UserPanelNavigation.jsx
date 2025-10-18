@@ -9,6 +9,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import React from 'react'
 import { useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
+import { signOut } from 'next-auth/react'
 
 const UserPanelNavigation = () => {
     const pathname = usePathname()
@@ -22,6 +23,7 @@ const UserPanelNavigation = () => {
             }
 
             dispatch(logout())
+            try { await signOut({ redirect: false }) } catch (_) {}
             toast.success(logoutResponse.message);
             router.push(WEBSITE_LOGIN)
         } catch (error) {
