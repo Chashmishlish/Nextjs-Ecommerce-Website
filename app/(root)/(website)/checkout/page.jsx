@@ -368,9 +368,11 @@ const [existingOrder, setExistingOrder] = useState(null);
         order_id: generateOrderId.order_id,
         ...orderData,
         products,
-        subTotal: totalAmount,
-        discount: 0,
-        couponDiscountAmount: 0,
+        subTotal: subTotal,
+        discount: discount,
+        couponDiscountAmount: couponDiscountAmount,
+        couponCode: couponCode || undefined,
+        code: couponCode || undefined,
         totalAmount: totalAmount,
       });
       const saveOrderResponse = await axios.post("/api/payment/save-order", {
@@ -378,9 +380,11 @@ const [existingOrder, setExistingOrder] = useState(null);
         order_id: generateOrderId.order_id,
         ...orderData,
         products,
-        subTotal: totalAmount,
-        discount: 0,
-        couponDiscountAmount: 0,
+        subTotal: subTotal,
+        discount: discount,
+        couponDiscountAmount: couponDiscountAmount,
+        couponCode: couponCode || undefined,
+        code: couponCode || undefined,
         totalAmount: totalAmount,
       });
 

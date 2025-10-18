@@ -148,6 +148,21 @@ try {
               </div>
             </div>
           </td>
+                    <tr>
+                      <td className="font-medium py-2">Coupon Code</td>
+                      <td className="text-end py-2">{orderData?.couponCode || '—'}</td>
+                    </tr>
+                    <tr>
+                      <td className="font-medium py-2">Coupon %</td>
+                      <td className="text-end py-2">
+                        {(() => {
+                          const sub = Number(orderData?.subTotal || 0)
+                          const coup = Number(orderData?.couponDiscountAmount || 0)
+                          const pct = sub > 0 ? Math.round((coup / sub) * 100) : 0
+                          return `${pct}%`
+                        })()}
+                      </td>
+                    </tr>
           <td className="p-3">
             {product.sellingPrice.toLocaleString("en-PK", {
               style: "currency",
@@ -312,6 +327,14 @@ try {
                       })}
                     </td>
                   </tr>
+                  {orderData?.couponCode && (
+                  <tr>
+                    <td className="font-medium py-2">Coupon Code</td>
+                    <td className="text-end py-2">
+                      {orderData?.couponCode}
+                    </td>
+                  </tr>
+                  )}
                   <tr>
                     <td className="font-medium py-2">Coupon Discount</td>
                     <td className="text-end py-2">

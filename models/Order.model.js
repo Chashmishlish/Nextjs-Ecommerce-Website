@@ -86,6 +86,13 @@ couponDiscountAmount: {
   type: Number,
   required: true
 },
+  // Coupon code applied on this order (if any)
+  couponCode: {
+    type: String,
+    required: false,
+    default: null,
+    index: true,
+  },
 totalAmount: {
   type: Number,
   required: true
@@ -110,7 +117,20 @@ index: true,
 }, 
 
 }, {timestamps: true})
+// In dev/hot-reload, ensure latest schema is used
+if (mongoose.models.Order) {
+  try {
+    // Mongoose v7 provides deleteModel on connection
+    if (mongoose.connection && typeof mongoose.connection.deleteModel === 'function') {
+      mongoose.connection.deleteModel('Order')
+    } else {
+      // Fallback for older versions
+      delete mongoose.models.Order
+    }
+  } catch (_) {
+    // no-op
+  }
+}
 
-
-const OrderModel = mongoose.models.Order || mongoose.model('Order', orderSchema, 'orders')
+const OrderModel = mongoose.model('Order', orderSchema, 'orders')
 export default OrderModel

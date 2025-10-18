@@ -55,7 +55,8 @@ export async function GET(request) {
                 { subTotal: { $regex: globalFilter, $options: 'i' } },
                 { totalAmount: { $regex: globalFilter, $options: 'i' } },
                 { discount: { $regex: globalFilter, $options: 'i' } },
-                { couponDiscount: { $regex: globalFilter, $options: 'i' } },
+                { couponDiscountAmount: { $regex: globalFilter, $options: 'i' } },
+                { couponCode: { $regex: globalFilter, $options: 'i' } },
                 { status: { $regex: globalFilter, $options: 'i' } },
             ]
         }

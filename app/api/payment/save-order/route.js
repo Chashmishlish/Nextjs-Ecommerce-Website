@@ -14,7 +14,8 @@ export async function POST(request){
 try {
     await connectDB()
     const payload = await request.json();
-    // console.log("📦 Payload received:", payload);
+  // Debug: Trace coupon fields in payload
+  console.log("📦 save-order payload: couponCode=", payload?.couponCode, " code=", payload?.code);
 
 // Product data schema
 const productSchema = z.object({
@@ -50,6 +51,9 @@ const orderSchema = zSchema
     subTotal: z.number().nonnegative(),
     discount: z.number().nonnegative(),
     couponDiscountAmount: z.number().nonnegative(),
+    couponCode: z.string().optional(),
+    // Fallback support if client sends `code` instead of `couponCode`
+    code: z.string().optional(),
     totalAmount: z.number().nonnegative(),
     order_id: z.string(),   // 🔥 yeh bhi add karo
     products: z.array(productSchema),
@@ -62,7 +66,8 @@ if (!validate.success) {
 }
 
 const validatedData = validate.data;
-// ✅ Yahan add karo
+// Debug validated coupon fields post-parse
+console.log("🔎 validated: couponCode=", validatedData?.couponCode, " code=", validatedData?.code);
 console.log("💡 Received userId:", validatedData.user_id);
 //  // ✅ Convert productId & variantId to ObjectId before saving
 //     const productsWithObjectId = validatedData.products.map(prod => ({
@@ -97,11 +102,41 @@ const newOrder = await OrderModel.create({
   subTotal: validatedData.subTotal,
   discount: validatedData.discount,
   couponDiscountAmount: validatedData.couponDiscountAmount,
+  couponCode: (
+    validatedData?.couponCode ??
+    validatedData?.code ??
+    payload?.couponCode ??
+    payload?.code ??
+    null
+  ),
   totalAmount: validatedData.totalAmount,
   order_id: validatedData.order_id,
   paymentMethod: validatedData.paymentMethod,
   status: 'pending',
 });
+
+// Debug: Confirm what got saved for coupon fields
+try {
+  console.log("✅ order saved: order_id=", newOrder?.order_id, " couponCode=", newOrder?.couponCode, " couponDiscountAmount=", newOrder?.couponDiscountAmount);
+} catch (_) {}
+
+// If couponCode still missing on the document instance, force-set it and verify
+try {
+  const desiredCode = (
+    validatedData?.couponCode ??
+    validatedData?.code ??
+    payload?.couponCode ??
+    payload?.code ??
+    null
+  )
+  if (!newOrder?.couponCode && desiredCode) {
+    await OrderModel.updateOne({ _id: newOrder._id }, { $set: { couponCode: desiredCode } })
+    const verify = await OrderModel.findById(newOrder._id).select('order_id couponCode couponDiscountAmount').lean()
+    console.log('🛠️ couponCode backfilled:', verify)
+  }
+} catch (e) {
+  console.log('⚠️ couponCode backfill error:', e?.message)
+}
 
  // Send order confirmation email
     try {

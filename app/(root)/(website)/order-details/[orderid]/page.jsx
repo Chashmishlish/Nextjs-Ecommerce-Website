@@ -271,6 +271,16 @@ const OrderDetails = async ({ params }) => {
             {/* Order Summary */}
             <div className="bg-white shadow rounded-xl p-6 border">
               <h3 className="text-xl font-semibold mb-5">Order Summary</h3>
+              {orderData?.data?.couponDiscountAmount > 0 && (
+                <div className="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-green-800">
+                  <p className="font-medium">
+                    You saved {orderData?.data?.couponDiscountAmount.toLocaleString('en-PK', { style: 'currency', currency: 'PKR' })}
+                    {orderData?.data?.couponCode ? (
+                      <> with coupon <span className="font-semibold">{orderData?.data?.couponCode}</span></>
+                    ) : null}
+                  </p>
+                </div>
+              )}
               <table className="w-full table-fixed text-sm">
                 <tbody className="divide-y">
                   <tr>
@@ -291,6 +301,12 @@ const OrderDetails = async ({ params }) => {
                       })}
                     </td>
                   </tr>
+                  {orderData?.data?.couponCode ? (
+                    <tr>
+                      <td className="font-medium py-2">Coupon Code</td>
+                      <td className="text-end py-2">{orderData?.data?.couponCode}</td>
+                    </tr>
+                  ) : null}
                   <tr>
                     <td className="font-medium py-2">Coupon Discount</td>
                     <td className="text-end py-2">
