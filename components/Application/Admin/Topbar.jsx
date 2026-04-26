@@ -14,7 +14,7 @@ import AdminMobileSearch from './AdminMobileSearch'
 const Topbar = () => {
     const {toggleSidebar} = useSidebar()
   return (
-        <div className='fixed border h-14 w-full top-0 left-0 z-30 md:ps-72 md:pe-8 px-5
+                <div className='fixed border h-14 top-0 left-0 right-0 z-30 md:left-64 md:px-8 px-3 sm:px-4
             flex justify-between items-center bg-white dark:bg-card text-black dark:text-white'>
         
         <div className='flex items-center '>  
@@ -22,11 +22,11 @@ const Topbar = () => {
            
             <Image
                 src={logoBlack} height={50} width={logoBlack.width} alt="logo dark"
-                className=" block dark:hidden h-[50px] w-auto"
+                className=" block dark:hidden h-[44px] sm:h-[50px] w-auto"
             />
             <Image
                 src={logoWhite} height={50} width={logoWhite.width} alt="logo white"
-                className="hidden dark:block h-[50px] w-auto"
+                className="hidden dark:block h-[44px] sm:h-[50px] w-auto"
             />
         </div>
         <div className='md:block hidden'>
@@ -35,7 +35,7 @@ const Topbar = () => {
         </div>
 
 
-        <div className='flex items-center gap-2'>
+        <div className='flex items-center gap-1.5 sm:gap-2'>
             <AdminMobileSearch/>
             <ThemeSwitch/>
             <UserDropdown/>

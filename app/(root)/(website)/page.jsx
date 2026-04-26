@@ -18,8 +18,8 @@ const Home = () => {
       <section>
         <MainSlider />
       </section>
-      <section className='lg:px-32 px-4 sm:pt-20 pt-5 pb-10'>
-        <div className='grid grid-cols-2 sm:gap-10 gap-2'>
+      <section className='lg:px-32 px-4 sm:pt-16 pt-6 pb-8 sm:pb-10'>
+        <div className='grid sm:grid-cols-2 grid-cols-1 sm:gap-10 gap-3'>
 
           <div className='border rounded-lg overflow-hidden'>
             <Link href='' >
@@ -43,7 +43,7 @@ const Home = () => {
 
       <FeaturedProduct />
 
-      <section className=' sm:pt-20 pt-5 pb-10'>
+      <section className='sm:pt-20 pt-8 pb-10'>
         <Image
           src={advertisingBanner.src}
           height={advertisingBanner.height}
@@ -55,7 +55,7 @@ const Home = () => {
 
       <Testimonial />
 
-      <section className="bg-gradient-to-t from-pink-300 via-pink-200 to-pink-100 lg:px-32 px-4 sm:pt-20 border-t py-12">
+      <section className="bg-gradient-to-t from-pink-300 via-pink-200 to-pink-100 lg:px-32 px-4 sm:pt-16 pt-10 border-t py-10 sm:py-12">
   <div className="grid lg:grid-cols-4 sm:grid-cols-2 grid-cols-1 gap-10 text-center">
     
     {/* Feature 1 */}

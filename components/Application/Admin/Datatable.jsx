@@ -164,6 +164,12 @@ const Datatable = ({
     columns: columnsConfig,
     data,
     enableRowSelection: true,
+    muiTableContainerProps: {
+      sx: {
+        maxWidth: '100%',
+        overflowX: 'auto'
+      }
+    },
     // getRowId: (row) => row._id,  
     columnFilterDisplayMode: 'popover',
     paginationDisplayMode: 'pages',
@@ -280,7 +286,11 @@ const Datatable = ({
     )
   })
 
-  return <MaterialReactTable table={table} />
+  return (
+    <div className='w-full overflow-x-auto'>
+      <MaterialReactTable table={table} />
+    </div>
+  )
 }
 
 export default Datatable

@@ -68,11 +68,11 @@ const Shop = () => {
   return (
     <div>
       <WebsiteBreadcrumb props={breadcrumb} />
-      <section className='lg:flex lg:px-32 px-4 my-20'>
+      <section className='lg:flex lg:px-32 px-4 my-10 sm:my-16 lg:my-20'>
 
         {windowSize.width > 1024 ? (
           <div className='w-72 me-4'>
-            <div className='stick top-0 bg-pink-50 p-4 rounded'>
+            <div className='sticky top-20 bg-pink-50 p-4 rounded'>
               <Filter />
             </div>
           </div>

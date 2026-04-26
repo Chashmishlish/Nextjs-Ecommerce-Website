@@ -18,17 +18,26 @@ const Testimonial = () => {
   ];
 
   const settings = {
-    dots: false,
+    dots: true,
     infinite: true,
     speed: 500,
     autoplay: true,
+    autoplaySpeed: 3500,
     slidesToShow: 3,
     slidesToScroll: 1,
     centerMode: false,
+    adaptiveHeight: true,
+    arrows: false,
 
     responsive: [
-      { breakpoint: 1024, settings: { slidesToShow: 2, slidesToScroll: 1, dots: false, infinite: true } },
-      { breakpoint: 768, settings: { slidesToShow: 1, slidesToScroll: 1, dots: false, centerMode: true } },
+      {
+        breakpoint: 1280,
+        settings: { slidesToShow: 2, slidesToScroll: 1, dots: true, infinite: true }
+      },
+      {
+        breakpoint: 768,
+        settings: { slidesToShow: 1, slidesToScroll: 1, dots: true, centerMode: false, centerPadding: '0px' }
+      },
     ],
 
     // Custom dots
@@ -56,19 +65,19 @@ const Testimonial = () => {
   }
 
   return (
-    <div className='lg:px-32 px-4 sm:pt-20 pt-10 pb-10'>
-      <h2 className='text-center font-semibold sm:text-4xl text-2xl mb-5'>CUSTOMER REVIEW</h2>
+    <div className='lg:px-32 px-4 sm:pt-20 pt-10 pb-10 overflow-x-hidden'>
+      <h2 className='text-center font-semibold sm:text-4xl text-2xl mb-4 sm:mb-6'>CUSTOMER REVIEW</h2>
       <Slider {...settings}>
         {testimonials.map((item, index) => (
-          <div key={index} className='p-4 sm:p-5'>
-            <div className="border rounded-lg p-5 flex flex-col justify-between h-full
+          <div key={index} className='px-1 sm:px-2 py-2 sm:py-4'>
+            <div className="border rounded-lg p-4 sm:p-5 flex flex-col justify-between min-h-[270px] sm:min-h-[300px]
               transition duration-500 hover:bg-gradient-to-t hover:from-primary hover:via-pink-300 hover:via-primary-100 hover:to-primary-100 hover:border-pink-500">
               <BsChatQuoteFill size={30} className='mb-3' />
-              <p className='mb-5'>{item.review}</p>
-              <h4 className='font-semibold'>{item.name}</h4>
-              <div className='flex mt-1'>
+              <p className='mb-5 text-sm sm:text-base leading-6'>{item.review}</p>
+              <h4 className='font-semibold text-sm sm:text-base'>{item.name}</h4>
+              <div className='flex mt-2 gap-0.5'>
                 {Array.from({length: item.rating}).map((_, i) => (
-                  <FaStar key={`star${i}`} className='text-yellow-400' size={20}/> 
+                  <FaStar key={`star${i}`} className='text-yellow-400' size={18}/> 
                 ))}
               </div>
             </div>

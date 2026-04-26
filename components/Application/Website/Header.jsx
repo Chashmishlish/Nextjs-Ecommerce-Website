@@ -324,7 +324,7 @@ const Header = () => {
                 </ul>
 
                 {/* Right Icons */}
-                <div className='flex items-center gap-6'>
+                <div className='flex items-center gap-2 sm:gap-4 lg:gap-6'>
                     <div className='relative'>
   {/* Search Button */}
   <button 
@@ -369,7 +369,7 @@ const Header = () => {
             )}
 
             {/* Mobile Slide Menu */}
-            <div className={`fixed top-16 left-0 bg-white rounded-r-2xl shadow-lg z-50 transform transition-transform duration-300 ease-in-out ${isMobileMenu ? 'translate-x-0' : '-translate-x-full'}`}>
+            <div className={`fixed top-16 left-0 w-[85vw] max-w-[340px] h-[calc(100vh-4rem)] overflow-y-auto bg-white rounded-r-2xl shadow-lg z-50 transform transition-transform duration-300 ease-in-out ${isMobileMenu ? 'translate-x-0' : '-translate-x-full'}`}>
                 <div className='flex justify-between items-center p-4 border-b'>
                     <Image src={logo} width={120} height={50} alt='logo' className='transition-transform duration-500 ease-out scale-105'/>
                     {/* <button onClick={() => { setIsMobileMenu(false); playClickFeedback(); }} className='p-2 hover:bg-gray-100 rounded-full transition-transform duration-200 hover:scale-110'>

@@ -11,7 +11,7 @@ const Kumbh = Kumbh_Sans({
 
 const layout = ({ children }) => {
   return (
-    <div className={Kumbh.className}> 
+    <div className={`${Kumbh.className} overflow-x-hidden`}> 
       <Header />
       <main>{children}</main>
       <Footer />
