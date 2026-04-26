@@ -16,6 +16,9 @@ export async function GET(request) {
         const maxPrice = parseInt(searchParams.get('maxPrice')) || 1000000;
         const categorySlug = searchParams.get('category');
         const search = searchParams.get('q')
+        const hasMinPrice = searchParams.has('minPrice');
+        const hasMaxPrice = searchParams.has('maxPrice');
+        const hasVariantFilter = Boolean(size || color || hasMinPrice || hasMaxPrice);
 
 
 
@@ -52,7 +55,7 @@ export async function GET(request) {
         }
 
         // match stage
-        let matchStage = {};
+        let matchStage = { deletedAt: null };
         if (categoryId.length > 0) matchStage.category = { $in: categoryId }; // filter by category
 
         if (search) {
@@ -81,10 +84,11 @@ export async function GET(request) {
                             as: "variant",
                             cond: {
                                 $and: [
+                                    { $eq: ["$$variant.deletedAt", null] },
                                     size ? { $in: ["$$variant.size", size.split(',')] } : { $literal: true },
                                     color ? { $in: ["$$variant.color", color.split(',')] } : { $literal: true },
-                                    { $gte: ["$$variant.sellingPrice", minPrice] },
-                                    { $lte: ["$$variant.sellingPrice", maxPrice] },
+                                    hasMinPrice ? { $gte: ["$$variant.sellingPrice", minPrice] } : { $literal: true },
+                                    hasMaxPrice ? { $lte: ["$$variant.sellingPrice", maxPrice] } : { $literal: true },
                                 ]
                             }
 
@@ -92,11 +96,11 @@ export async function GET(request) {
                     }
                 }
             },
-            {
+            ...(hasVariantFilter ? [{
                 $match: {
                     variants: { $ne: [] }
                 }
-            },
+            }] : []),
             {
                 $lookup: {
                     from: 'medias',

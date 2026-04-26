@@ -41,7 +41,7 @@ const Shop = () => {
     // console.log("🔍 API RAW RESPONSE:", getProduct) // 👈 Debug 1
 
     if (!getProduct.success) {
-      return { products: [], nextPage: null }
+      throw new Error(getProduct.message || 'Unable to load products')
     }
 
     return {
