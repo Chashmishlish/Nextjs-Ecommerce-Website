@@ -36,7 +36,8 @@ export async function GET(request, { params }) {
 
         // get product variant
         const variantFilter = {
-            product: getProduct._id
+            product: getProduct._id,
+            deletedAt: null
         }
 
         if (size) {
@@ -46,7 +47,15 @@ export async function GET(request, { params }) {
             variantFilter.color = color
         }
 
-        const variant = await ProductVariantModel.findOne(variantFilter).populate('media', 'secure_url').lean()
+        let variant = await ProductVariantModel.findOne(variantFilter).populate('media', 'secure_url').lean()
+
+        // If a specific color/size combo doesn't exist, fallback to first available variant.
+        if (!variant && (size || color)) {
+            variant = await ProductVariantModel.findOne({
+                product: getProduct._id,
+                deletedAt: null
+            }).populate('media', 'secure_url').lean()
+        }
 
         if (!variant) {
             return response(false, 404, 'Product not found.')
@@ -54,12 +63,13 @@ export async function GET(request, { params }) {
 
         // get color and size
         const getColor = await ProductVariantModel.distinct('color', {
-            product: getProduct._id
+            product: getProduct._id,
+            deletedAt: null
         })
 
         // orderwise size {S, M, L, XL, XXL}
         const getSize = await ProductVariantModel.aggregate([
-            { $match: { product: getProduct._id } },
+            { $match: { product: getProduct._id, deletedAt: null } },
             { $sort: { _id: 1 } },
             {
                 $group: {
